@@ -76,7 +76,6 @@ public class Gun : MonoBehaviour {
 
     public Vector2 ShootForce()
     {
-        Debug.Log(shootForceMultiplier);
         return FacedDirection() * shootForceMultiplier;
     }
 }

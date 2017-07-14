@@ -7,6 +7,7 @@ public class PlayerMover : MonoBehaviour {
     private Rigidbody2D rb;
     private Camera c;
     private Gun gun;
+    private TimeSlow slow;
 
     public float playerSpeed;
 
@@ -14,6 +15,7 @@ public class PlayerMover : MonoBehaviour {
         this.rb = GetComponent<Rigidbody2D>();
         this.c = Camera.main;
         this.gun = GetComponent<Gun>();
+        this.slow = GetComponentInChildren<TimeSlow>();
 	}
 	
 	// Update is called once per frame
@@ -21,6 +23,7 @@ public class PlayerMover : MonoBehaviour {
         this.SetSpeed();
         this.SetRotation();
         this.CheckShoot();
+        this.CheckSlow();
     }
 
     private void CheckShoot()
@@ -28,6 +31,19 @@ public class PlayerMover : MonoBehaviour {
         if (Input.GetMouseButton(0))
         {
             this.gun.Shoot();
+        }
+    }
+
+    private void CheckSlow()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            slow.Activate();
+        }
+
+        if (Input.GetMouseButtonUp(1))
+        {
+            slow.Deactivate();
         }
     }
 

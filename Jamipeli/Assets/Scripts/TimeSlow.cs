@@ -10,7 +10,7 @@ public class TimeSlow : MonoBehaviour {
     bool isActive = false;
     // Use this for initialization
  
-    void Initialize () {
+    void Awake () {
         slowFractions = new Dictionary<Rigidbody2D, SlowData>();
 	}
 
@@ -26,6 +26,7 @@ public class TimeSlow : MonoBehaviour {
     {
         Rigidbody2D rb = collision.gameObject.GetComponent<Rigidbody2D>();
         if (rb != null && collision.tag != "player") {
+            Debug.Log("moi");
             if (slowFractions.ContainsKey(rb))
                 slowFractions[rb].isInside = true;
             else {
@@ -38,7 +39,10 @@ public class TimeSlow : MonoBehaviour {
     {
         Rigidbody2D rb = collision.gameObject.GetComponent<Rigidbody2D>();
         if (rb != null && slowFractions.ContainsKey(rb))
+        {
+            Debug.Log("Heippa");
             slowFractions[rb].isInside = false;
+        }
     }
 
     void SlowDown()
@@ -80,7 +84,8 @@ public class TimeSlow : MonoBehaviour {
         SlowData slowData = slowFractions[rb];
         if (slowData.isInside && slowData.slowFraction > slowFraction)
         {
-            rb.velocity *= 1 - slowFraction * (1 - frac) / frac;
+            rb.velocity *= 1 - frac/slowFraction;
+            Debug.Log(1 - slowFraction * (1 - frac) / frac);
             slowFraction -= frac;
             return true;
         }
