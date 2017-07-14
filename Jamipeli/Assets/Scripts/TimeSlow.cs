@@ -9,6 +9,11 @@ public class TimeSlow : MonoBehaviour {
     public float speedUpSpeed = 0.1f;
 
     public float radius = 1;
+    public float maxAlpha = 0.5f;
+    public float alphaIncreaseTime = 0.05f;
+    public float alphaDecreaseTime = 0.01f;
+
+    SpriteRenderer spriteRenderer;
     Dictionary<Rigidbody2D, SlowData> slowFractions;
     bool isActive = false;
     // Use this for initialization
@@ -19,15 +24,36 @@ public class TimeSlow : MonoBehaviour {
 
     private void Start()
     {
-        gameObject.GetComponent<CircleCollider2D>().radius = radius;
+        spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        transform.localScale = new Vector3(radius, radius, 1);
+        Color color = spriteRenderer.color;
+        color.a = 0;
+        spriteRenderer.color = color;
     }
 
     private void Update()
     {
         if (isActive)
+        {
             SlowDown();
+            ChangeTransparency(maxAlpha*Time.deltaTime/alphaIncreaseTime);
+        }
         else
+        {
             SpeedUp();
+            ChangeTransparency(-maxAlpha * Time.deltaTime / alphaDecreaseTime);
+        }
+    }
+
+    void ChangeTransparency(float amount)
+    {
+        Color color = spriteRenderer.color;
+        if ( (amount < maxAlpha && color.a > 0) || (amount > 0 && color.a < maxAlpha)) {
+            color.a += amount;
+            color.a = Mathf.Min(color.a, maxAlpha);
+            color.a = Mathf.Max(color.a, 0);
+            spriteRenderer.color = color;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -102,6 +128,7 @@ public class TimeSlow : MonoBehaviour {
         {
             float frac_ = Mathf.Min(frac, slowData.slowFrac - slowFraction);
             rb.velocity *= 1 - frac_/slowData.slowFrac;
+            rb.angularVelocity *= 1 - frac_ / slowData.slowFrac;
             slowData.slowFrac -= frac_;
             return true;
         }
@@ -115,6 +142,7 @@ public class TimeSlow : MonoBehaviour {
         {
             float frac_ = Mathf.Min(frac, 1-slowData.slowFrac);
             rb.velocity *= 1 + frac_/slowData.slowFrac;
+            rb.angularVelocity *= 1 + frac_ / slowData.slowFrac;
             slowData.slowFrac += frac;
             return true;
         }
