@@ -25,7 +25,7 @@ public class TimeSlow : MonoBehaviour {
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Rigidbody2D rb = collision.gameObject.GetComponent<Rigidbody2D>();
-        if (rb != null) {
+        if (rb != null && collision.tag != "player") {
             if (slowFractions.ContainsKey(rb))
                 slowFractions[rb].isInside = true;
             else {
