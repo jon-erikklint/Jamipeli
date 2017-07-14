@@ -6,6 +6,9 @@ public class TimeSlow : MonoBehaviour {
 
     public float slowFraction = 0.5f;
     public float slowSpeed = 1f;
+    public float speedUpSpeed = 0.1f;
+
+    public float radius = 1;
     Dictionary<Rigidbody2D, SlowData> slowFractions;
     bool isActive = false;
     // Use this for initialization
@@ -13,6 +16,11 @@ public class TimeSlow : MonoBehaviour {
     void Awake () {
         slowFractions = new Dictionary<Rigidbody2D, SlowData>();
 	}
+
+    private void Start()
+    {
+        gameObject.GetComponent<CircleCollider2D>().radius = radius;
+    }
 
     private void Update()
     {
@@ -25,8 +33,7 @@ public class TimeSlow : MonoBehaviour {
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Rigidbody2D rb = collision.gameObject.GetComponent<Rigidbody2D>();
-        if (rb != null && collision.tag != "player") {
-            Debug.Log("moi");
+        if (rb != null && collision.tag != "Player") {
             if (slowFractions.ContainsKey(rb))
                 slowFractions[rb].isInside = true;
             else {
@@ -40,21 +47,25 @@ public class TimeSlow : MonoBehaviour {
         Rigidbody2D rb = collision.gameObject.GetComponent<Rigidbody2D>();
         if (rb != null && slowFractions.ContainsKey(rb))
         {
-            Debug.Log("Heippa");
             slowFractions[rb].isInside = false;
         }
     }
 
     void SlowDown()
     {
-        float frac = Time.deltaTime / slowSpeed;
+        float frac;
+        if (slowSpeed > 0)
+            frac = Time.deltaTime / slowSpeed;
+        else frac = slowFraction;
+
         List<Rigidbody2D> notInside = new List<Rigidbody2D>();
         foreach (var rb in slowFractions.Keys)
         {
             if (!SlowDown(rb, frac))
-                SpeedUp(rb, frac);
-            else
+            {
+                SpeedUp(rb, frac*slowSpeed/speedUpSpeed);
                 notInside.Add(rb);
+            }
         }
 
         foreach (var rb in notInside)
@@ -64,8 +75,13 @@ public class TimeSlow : MonoBehaviour {
         }
     }
 
-    void SpeedUp() {
-        float frac = Time.deltaTime / slowSpeed;
+    void SpeedUp()
+    {
+        float frac;
+        if (slowSpeed > 0)
+            frac = Time.deltaTime / speedUpSpeed;
+        else frac = slowFraction;
+
         List<Rigidbody2D> toBeRemoved = new List<Rigidbody2D>();
         foreach (var rb in slowFractions.Keys)
         {
@@ -82,11 +98,11 @@ public class TimeSlow : MonoBehaviour {
     // For higher performance assumes that slowFractions contains rb
     bool SlowDown(Rigidbody2D rb, float frac) {
         SlowData slowData = slowFractions[rb];
-        if (slowData.isInside && slowData.slowFraction > slowFraction)
+        if (slowData.isInside && slowData.slowFrac > slowFraction)
         {
-            rb.velocity *= 1 - frac/slowFraction;
-            Debug.Log(1 - slowFraction * (1 - frac) / frac);
-            slowFraction -= frac;
+            float frac_ = Mathf.Min(frac, slowData.slowFrac - slowFraction);
+            rb.velocity *= 1 - frac_/slowData.slowFrac;
+            slowData.slowFrac -= frac_;
             return true;
         }
         return slowData.isInside;
@@ -95,10 +111,11 @@ public class TimeSlow : MonoBehaviour {
     // For higher performance assumes that slowFractions contains rb
     bool SpeedUp(Rigidbody2D rb, float frac) {
         SlowData slowData = slowFractions[rb];
-        if (slowData.slowFraction < 1)
+        if (slowData.slowFrac < 1)
         {
-            rb.velocity *= 1 + slowFraction * (1 + frac) / frac;
-            slowFraction += frac;
+            float frac_ = Mathf.Min(frac, 1-slowData.slowFrac);
+            rb.velocity *= 1 + frac_/slowData.slowFrac;
+            slowData.slowFrac += frac;
             return true;
         }
         return slowData.isInside;
@@ -116,10 +133,10 @@ public class TimeSlow : MonoBehaviour {
 class SlowData
 {
     public bool isInside { get; set; }
-    public float slowFraction { get; set; }
+    public float slowFrac { get; set; }
 
     public SlowData(bool isInside) {
         this.isInside = isInside;
-        this.slowFraction = 1f;
+        this.slowFrac = 1f;
     }
 }

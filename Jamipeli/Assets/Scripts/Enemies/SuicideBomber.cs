@@ -5,13 +5,18 @@ using UnityEngine;
 
 public class SuicideBomber : Enemy {
 
-    public float moveRadius = 5;
+    public float startMoveRadius = 5;
+    public float continueMoveRadius = 7;
+    public float speed = 5;
     public float triggerRadius = 1;
     public float triggerTime = 1;
     public float damageRadius = 1;
     public int damagePlayer = 2;
     public int damageEnemy = 3;
 
+    public Transform follow;
+
+    bool isMoving = false;
     bool isTriggered = false;
 
     public override bool IsActing()
@@ -21,12 +26,14 @@ public class SuicideBomber : Enemy {
 
     public override void Act()
     {
-        
+        triggerTime -= Time.deltaTime;
+        if (triggerTime < 0)
+            Kill();
     }
 
     public override bool IsMoving()
     {
-        throw new NotImplementedException();
+        return false;
     }
 
     public override void Move()
