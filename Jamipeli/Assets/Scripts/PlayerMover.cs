@@ -6,18 +6,29 @@ public class PlayerMover : MonoBehaviour {
 
     private Rigidbody2D rb;
     private Camera c;
+    private Gun gun;
 
     public float playerSpeed;
 
 	void Start () {
         this.rb = GetComponent<Rigidbody2D>();
         this.c = Camera.main;
+        this.gun = GetComponent<Gun>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
         this.SetSpeed();
         this.SetRotation();
+        this.CheckShoot();
+    }
+
+    private void CheckShoot()
+    {
+        if (Input.GetMouseButton(0))
+        {
+            this.gun.Shoot();
+        }
     }
 
     private void SetSpeed()
@@ -28,6 +39,7 @@ public class PlayerMover : MonoBehaviour {
         movement.y = playerSpeed * Input.GetAxis("Vertical");
 
         rb.velocity = movement;
+        rb.angularVelocity = 0;
     }
 
     private void SetRotation()
