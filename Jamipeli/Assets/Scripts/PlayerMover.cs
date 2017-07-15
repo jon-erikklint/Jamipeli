@@ -14,6 +14,10 @@ public class PlayerMover : MonoBehaviour, Dieable {
     public float acceleration;
     public float angularAcceleration;
 
+    public Health health;
+    public Health slowTime;
+    public float slowtimeFromHealth;
+
 	void Start () {
         this.rb = GetComponent<Rigidbody2D>();
         this.c = Camera.main;

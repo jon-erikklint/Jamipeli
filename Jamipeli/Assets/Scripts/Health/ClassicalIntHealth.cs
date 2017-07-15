@@ -7,7 +7,13 @@ public class ClassicalIntHealth : IntHealth {
 
     public int startHealth;
     public int maxHealth;
-    int health;
+    private int health_;
+    public int health { get { return health_; } }
+
+    public override void DoOnAwake()
+    {
+        health_ = startHealth;
+    }
 
     public override bool IntDamaging(int amount)
     {
@@ -16,20 +22,25 @@ public class ClassicalIntHealth : IntHealth {
 
     public override bool IntHealing(int amount)
     {
-        if ((health >= maxHealth && amount > 0) || (health <= 0 && amount < 0))
+        if ((health_ >= maxHealth && amount > 0) || (health_ <= 0 && amount < 0))
             return false;
-        health = Math.Min(health + amount, maxHealth);
-        health = Math.Max(health, 0);
+        health_ = Math.Min(health_ + amount, maxHealth);
+        health_ = Math.Max(health_, 0);
         return true;
     }
 
     override public float Amount()
     {
-        return health;
+        return health_;
     }
 
     override public bool IsEmpty()
     {
         return Amount() <= 0;
+    }
+
+    public override float Max()
+    {
+        return maxHealth;
     }
 }

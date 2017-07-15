@@ -35,4 +35,9 @@ public class DualHealth : Health{
     {
         return health1.IsEmpty() && health2.IsEmpty();
     }
+
+    public override float Max()
+    {
+        throw new NotImplementedException();
+    }
 }

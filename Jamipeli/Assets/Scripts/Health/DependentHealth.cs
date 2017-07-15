@@ -49,4 +49,9 @@ public class DependentHealth : Health {
     {
         return dependentHealth.IsEmpty();
     }
+
+    public override float Max()
+    {
+        throw new NotImplementedException();
+    }
 }

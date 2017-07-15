@@ -22,6 +22,9 @@ public abstract class Health : MonoBehaviour {
         else DoOnStart();
     }
 
+    public virtual void Initialize()
+    {}
+
     private void Update()
     {
         DoOnUpdate();
@@ -44,6 +47,12 @@ public abstract class Health : MonoBehaviour {
     }
 
     public abstract float Amount();
+    public abstract float Max();
+
+    public float Ratio()
+    {
+        return Amount() / Max();
+    }
 
     public virtual void DoOnAwake() { }
     public virtual void DoOnStart() { }

@@ -37,4 +37,9 @@ public class ClassicHealth : Health {
     {
         return Amount() <= 0;
     }
+
+    public override float Max()
+    {
+        return maxHealth;
+    }
 }
