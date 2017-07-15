@@ -14,6 +14,7 @@ public class BaseballBat : MonoBehaviour, GunInterface {
 
     private float lastShot;
     private SpriteRenderer slashSprite;
+    private Vector2 startRight;
     private bool fading;
     private float cosfov;
 
@@ -21,7 +22,7 @@ public class BaseballBat : MonoBehaviour, GunInterface {
         lastShot = float.MinValue;
         cosfov = Mathf.Cos(hitFov * Mathf.PI / 360);
 
-        slashSprite = transform.Find("slash").GetComponent<SpriteRenderer>();
+        slashSprite = transform.Find("Slash").GetComponent<SpriteRenderer>();
     }
 
     void Update()
@@ -29,9 +30,9 @@ public class BaseballBat : MonoBehaviour, GunInterface {
         if (fading)
         {
             Color current = slashSprite.color;
-            Color color = new Color(current.r, current.g, current.b, Math.Min(126, 126 * (Time.time - lastShot)/drawTime)));
+            Color color = new Color(current.r, current.g, current.b, Math.Max(0, 1 - (Time.time - lastShot)/drawTime));
             slashSprite.color = color;
-            if (color.a == 126) fading = false;
+            if (color.a == 0) fading = false;
         }
         
     }
@@ -54,6 +55,7 @@ public class BaseballBat : MonoBehaviour, GunInterface {
 
         HitObjects(toHit);
 
+        lastShot = Time.time;
         fading = true;
 
         return true;
@@ -72,7 +74,7 @@ public class BaseballBat : MonoBehaviour, GunInterface {
         Vector2 hitForce = VectorToObject(toHit);
         hitForce *= hitStrength;
 
-        toHit.GetComponent<Rigidbody2D>().AddForce(hitForce);
+        toHit.GetComponent<Rigidbody2D>().AddForce(hitForce, ForceMode2D.Impulse);
     }
 
     private Vector2 VectorToObject(GameObject o)
