@@ -7,8 +7,13 @@ public class PlayerMover : MonoBehaviour, Dieable {
 
     private Rigidbody2D rb;
     private Camera c;
+<<<<<<< HEAD
     private Gun gun;
     private LocalTimeSlow slow;
+=======
+    private GunInterface gun;
+    private TimeSlow slow;
+>>>>>>> 1a1908efe38c6c4a251e8f5149d56c30e07c9a64
 
     public float playerSpeed;
     public float acceleration;
@@ -17,8 +22,13 @@ public class PlayerMover : MonoBehaviour, Dieable {
 	void Start () {
         this.rb = GetComponent<Rigidbody2D>();
         this.c = Camera.main;
+<<<<<<< HEAD
         this.gun = GetComponent<Gun>();
         this.slow = GetComponentInChildren<LocalTimeSlow>();
+=======
+        this.gun = GetComponent<GunInterface>();
+        this.slow = GetComponentInChildren<TimeSlow>();
+>>>>>>> 1a1908efe38c6c4a251e8f5149d56c30e07c9a64
 	}
 	
 	// Update is called once per frame
