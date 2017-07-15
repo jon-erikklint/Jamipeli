@@ -7,7 +7,7 @@ Jamipeli/Library/**
 /[Bb]uilds/
 /Assets/AssetStoreTools*
 /test_Data/
-/game_Data/
+**/game_Data/**
 
 # Visual Studio 2015 cache directory
 /.vs/
