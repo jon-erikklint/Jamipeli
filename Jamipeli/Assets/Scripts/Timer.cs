@@ -4,7 +4,7 @@ using UnityEngine;
 
 public delegate void DoOnTimeout();
 
-public class Timer
+public class Timer : MonoBehaviour
 {
     public string purpose;
     bool paused_ = false;

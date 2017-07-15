@@ -50,9 +50,11 @@ public class SuicideBomber : Enemy {
         if (target == null)
             target = FindObjectOfType<PlayerMover>().transform;
 
-        triggerTimer = new Timer();
+        GameObject timerObject = new GameObject();
+        triggerTimer = timerObject.AddComponent<Timer>();
         triggerTimer.AddAction(new DoOnTimeout(Kill));
         triggerTimer.purpose = "Trigger timer";
+        timerObject.transform.parent = transform;
     }
 
     public override bool IsActing()
