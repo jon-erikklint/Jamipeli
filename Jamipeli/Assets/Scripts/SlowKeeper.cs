@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface SlowableInterface {
-
-    void SlowDown();
-
+public class SlowKeeper: MonoBehaviour {
+    public float slowFactor = 1f;
 }

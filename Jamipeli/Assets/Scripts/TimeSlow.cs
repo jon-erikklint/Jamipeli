@@ -8,7 +8,11 @@ public class TimeSlow : MonoBehaviour {
     public float slowSpeed = 1f;
     public float speedUpSpeed = 0.1f;
 
-    public float radius = 1;
+    public float radius = 2;
+    public float minRadius = 1;
+    public float maxRadius = 2.5f;
+    public float radiusChangeSpeed = 0.5f;
+
     public float maxAlpha = 0.5f;
     public float alphaIncreaseTime = 0.05f;
     public float alphaDecreaseTime = 0.01f;
@@ -77,6 +81,14 @@ public class TimeSlow : MonoBehaviour {
         }
     }
 
+    public void ChangeRadius(float amount)
+    {
+        radius += radiusChangeSpeed*amount;
+        radius = radius < maxRadius ? radius : maxRadius;
+        radius = radius > minRadius ? radius : minRadius;
+        transform.localScale = new Vector3(radius, radius, 1);
+    }
+
     void SlowDown()
     {
         float frac;
@@ -131,8 +143,14 @@ public class TimeSlow : MonoBehaviour {
             float frac_ = Mathf.Min(frac, slowData.slowFrac - slowFraction);
             rb.velocity *= 1 - frac_/slowData.slowFrac;
             rb.angularVelocity *= 1 - frac_ / slowData.slowFrac;
-            Timer[] timers = GetComponentsInChildren<Timer>();
+
             slowData.slowFrac -= frac_;
+
+            foreach (var keeper in rb.GetComponents<SlowKeeper>())
+                keeper.slowFactor = slowData.slowFrac;
+            foreach (var keeper in rb.GetComponentsInChildren<SlowKeeper>())
+                keeper.slowFactor = slowData.slowFrac;
+
             return true;
         }
         return slowData.isInside;
@@ -148,7 +166,14 @@ public class TimeSlow : MonoBehaviour {
             float frac_ = Mathf.Min(frac, 1-slowData.slowFrac);
             rb.velocity *= 1 + frac_/slowData.slowFrac;
             rb.angularVelocity *= 1 + frac_ / slowData.slowFrac;
+
             slowData.slowFrac += frac;
+
+            foreach (var keeper in rb.GetComponents<SlowKeeper>())
+                keeper.slowFactor = slowData.slowFrac;
+            foreach (var keeper in rb.GetComponentsInChildren<SlowKeeper>())
+                keeper.slowFactor = slowData.slowFrac;
+
             return true;
         }
         return slowData.isInside;

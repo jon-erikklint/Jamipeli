@@ -13,7 +13,6 @@ public class Timer : MonoBehaviour
 
     float duration_ = -1;
     float timeLeft_ = 0;
-    float speed_ = 1f;
 
     public bool paused { get { return paused_; } }
     public bool running { get { return running_; } }
@@ -21,17 +20,25 @@ public class Timer : MonoBehaviour
 
     public float duration { get { return duration_; } }
     public float timeLeft { get { return timeLeft_; } }
-    public float speed { get { return speed_; } }
+    public float speed { get { return slowKeeper.slowFactor; } }
 
     public float timePassed { get { return duration - timeLeft; } }
 
     event DoOnTimeout actionList;
+    SlowKeeper slowKeeper;
+
+    private void Start()
+    {
+        slowKeeper = GetComponent<SlowKeeper>();
+        if (slowKeeper == null)
+            slowKeeper = gameObject.AddComponent<SlowKeeper>();
+    }
 
     private void Update()
     {
         if (running_ && !paused_)
         {
-            timeLeft_ -= speed_ * Time.deltaTime;
+            timeLeft_ -= slowKeeper.slowFactor * Time.deltaTime;
             running_ = timeLeft_ > 0;
             if (!running_)
             {

@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMover : MonoBehaviour {
+public class PlayerMover : MonoBehaviour, Dieable {
 
     private Rigidbody2D rb;
     private Camera c;
@@ -24,6 +25,7 @@ public class PlayerMover : MonoBehaviour {
         this.SetRotation();
         this.CheckShoot();
         this.CheckSlow();
+        this.CheckSlowRadius();
     }
 
     private void CheckShoot()
@@ -45,6 +47,11 @@ public class PlayerMover : MonoBehaviour {
         {
             slow.Deactivate();
         }
+    }
+
+    private void CheckSlowRadius()
+    {
+        slow.ChangeRadius(Input.GetAxis("Mouse ScrollWheel"));
     }
 
     private void SetSpeed()
@@ -72,5 +79,10 @@ public class PlayerMover : MonoBehaviour {
     private float AngleInDeg(Vector3 vec1, Vector3 vec2)
     {
         return AngleInRad(vec1, vec2) * 180 / Mathf.PI;
+    }
+
+    public void Kill()
+    {
+        Debug.Log("Auts! Pelaaja kuoli :(");
     }
 }
