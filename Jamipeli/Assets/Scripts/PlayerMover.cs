@@ -12,6 +12,11 @@ public class PlayerMover : MonoBehaviour, Dieable {
     private GunInterface gun;
 
     public float playerSpeed;
+    public int globalSlows = 1;
+    public float teleportCooldown = 0.5f;
+
+    private float lastTeleport = Mathf.NegativeInfinity;
+    private Vector3 mousePosition { get { return c.ScreenToWorldPoint(Input.mousePosition); } }
 
 	void Start () {
         this.rb = GetComponent<Rigidbody2D>();
@@ -26,7 +31,7 @@ public class PlayerMover : MonoBehaviour, Dieable {
         this.SetSpeed();
         this.SetRotation();
         this.CheckShoot();
-        this.CheckLoclSlow();
+        this.CheckLocalSlow();
         this.CheckGlobalSlow();
         this.CheckSlowRadius();
     }
@@ -41,12 +46,26 @@ public class PlayerMover : MonoBehaviour, Dieable {
 
     private void CheckGlobalSlow()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (globalSlows > 0 && Input.GetKeyDown(KeyCode.Space) && !globSlow.Active())
+        {
             globSlow.Activate();
+            locSlow.Deactivate();
+            globalSlows--;
+        }
     }
 
-    private void CheckLoclSlow()
+    private void CheckLocalSlow()
     {
+        if(globSlow.Active())
+        {
+            if (Time.time - lastTeleport > teleportCooldown && Input.GetMouseButtonDown(1))
+            {
+                Teleport(mousePosition);
+                lastTeleport = Time.time;
+            }
+            return;
+        }
+
         if (Input.GetMouseButtonDown(1))
         {
             locSlow.Activate();
@@ -76,8 +95,13 @@ public class PlayerMover : MonoBehaviour, Dieable {
 
     private void SetRotation()
     {
-        Vector2 worldLocation = c.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 worldLocation = mousePosition;
         transform.eulerAngles = new Vector3(0, 0, AngleInDeg(transform.position, worldLocation));
+    }
+
+    private void Teleport(Vector2 position)
+    {
+        transform.position = position;
     }
 
     private float AngleInRad(Vector3 vec1, Vector3 vec2)
