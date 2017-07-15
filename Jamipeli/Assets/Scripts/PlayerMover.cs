@@ -22,7 +22,10 @@ public class PlayerMover : MonoBehaviour, Dieable {
     public Health slowTime;
     public float slowtimeFromHealth;
 
+    private GameManager gameManager;
+
 	void Start () {
+        gameManager = FindObjectOfType<GameManager>();
         this.rb = GetComponent<Rigidbody2D>();
         this.c = Camera.main;
         this.locSlow = GetComponentInChildren<LocalTimeSlow>();
@@ -120,6 +123,6 @@ public class PlayerMover : MonoBehaviour, Dieable {
 
     public void Kill()
     {
-        Debug.Log("Auts! Pelaaja kuoli :(");
+        gameManager.EndGame();
     }
 }
