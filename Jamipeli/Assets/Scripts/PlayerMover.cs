@@ -7,7 +7,7 @@ public class PlayerMover : MonoBehaviour, Dieable {
 
     private Rigidbody2D rb;
     private Camera c;
-    private Gun gun;
+    private GunInterface gun;
     private TimeSlow slow;
 
     public float playerSpeed;
@@ -15,7 +15,7 @@ public class PlayerMover : MonoBehaviour, Dieable {
 	void Start () {
         this.rb = GetComponent<Rigidbody2D>();
         this.c = Camera.main;
-        this.gun = GetComponent<Gun>();
+        this.gun = GetComponent<GunInterface>();
         this.slow = GetComponentInChildren<TimeSlow>();
 	}
 	
