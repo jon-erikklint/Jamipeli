@@ -18,7 +18,7 @@ public class PlayerMover : MonoBehaviour, Dieable, HasHealth {
     private float lastTeleport = Mathf.NegativeInfinity;
     private Vector3 mousePosition { get { return c.ScreenToWorldPoint(Input.mousePosition); } }
 
-    public PlayerHealth health;
+    public Health health;
     public Health slowCharge;
     public int playerHealth = 3;
     public float maxSlowTime = 150;
@@ -26,15 +26,19 @@ public class PlayerMover : MonoBehaviour, Dieable, HasHealth {
 
     private GameManager gameManager;
 
-	void Start () {
+    private void Awake()
+    {
+        this.slowCharge = new Health(maxSlowTime);
+        this.health = new Health(playerHealth, this);
+    }
+
+    void Start () {
         gameManager = FindObjectOfType<GameManager>();
         this.rb = GetComponent<Rigidbody2D>();
         this.c = Camera.main;
         this.locSlow = GetComponentInChildren<LocalTimeSlow>();
         this.globSlow = GetComponentInChildren<GlobalTimeSlow>();
         this.gun = GetComponent<GunInterface>();
-        this.slowCharge = new Health(maxSlowTime);
-        this.health = new PlayerHealth(playerHealth, slowtimeFromHealth, slowCharge, this);
 	}
 	
 	// Update is called once per frame
@@ -123,6 +127,23 @@ public class PlayerMover : MonoBehaviour, Dieable, HasHealth {
     private float AngleInDeg(Vector3 vec1, Vector3 vec2)
     {
         return AngleInRad(vec1, vec2) * 180 / Mathf.PI;
+    }
+
+    public float Heal(float amount)
+    {
+        float healed = health.Heal(amount);
+        slowCharge.IncreaseMaxHealth(-slowtimeFromHealth * healed);
+        slowCharge.Damage(slowtimeFromHealth * healed);
+        return healed;
+    }
+
+    public float Damage(float amount)
+    {
+        float damaged = health.Damage(amount);
+        slowCharge.IncreaseMaxHealth(slowtimeFromHealth * damaged);
+        slowCharge.Heal(slowtimeFromHealth * damaged);
+        Debug.Log(damaged);
+        return damaged;
     }
 
     public void Kill()

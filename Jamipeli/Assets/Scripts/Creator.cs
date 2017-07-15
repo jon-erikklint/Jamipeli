@@ -10,7 +10,7 @@ public class Creator : MonoBehaviour {
     {
         GameObject obj = Object.Instantiate(gameObject, position, rotation);
         Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
-        if (rb != null)
+        if (rb != null && Event != null)
             Event(rb);
         return obj;
     }
@@ -21,7 +21,8 @@ public class Creator : MonoBehaviour {
         Rigidbody2D rb = gameObject.AddComponent<Rigidbody2D>();
         rb.mass = mass;
         rb.gravityScale = 0;
-        Event(rb);
+        if(Event != null)
+            Event(rb);
         return gameObject;
     }
 }

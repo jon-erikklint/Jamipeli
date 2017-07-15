@@ -45,7 +45,7 @@ public class Bullet : MonoBehaviour {
             return;
         if (Time.time - lastHit > safeTime && bulletRenderer.color == fatalColor)
         {
-            Health health = obj.GetComponent<Health>();
+            HasHealth health = obj.GetComponent<HasHealth>();
             if(health != null)
                 health.Damage(damage);
             Destroy(gameObject);

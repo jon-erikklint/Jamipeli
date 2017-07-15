@@ -43,6 +43,7 @@ public class IntHealth : Health
     public virtual int IntDamage(int amount)
     {
         int next = health - amount;
+        Debug.Log(health + ", " + next);
         health = next > 0 ? next : 0;
         if (dieable != null && this.IsEmpty())
             dieable.Kill();
