@@ -2,98 +2,35 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TimeSlow : MonoBehaviour {
-
+public abstract class TimeSlow : MonoBehaviour {
     public float slowFraction = 0.5f;
-    public float slowSpeed = 1f;
+    public float slowDownSpeed = 1f;
     public float speedUpSpeed = 0.1f;
 
-    public float radius = 2;
-    public float minRadius = 1;
-    public float maxRadius = 2.5f;
-    public float radiusChangeSpeed = 0.5f;
+    protected Dictionary<Rigidbody2D, SlowData> slowFractions;
 
-    public float maxAlpha = 0.5f;
-    public float alphaIncreaseTime = 0.05f;
-    public float alphaDecreaseTime = 0.01f;
-
-    SpriteRenderer spriteRenderer;
-    Dictionary<Rigidbody2D, SlowData> slowFractions;
-    bool isActive = false;
-    // Use this for initialization
- 
-    void Awake () {
-        slowFractions = new Dictionary<Rigidbody2D, SlowData>();
-	}
-
-    private void Start()
+    void Awake()
     {
-        spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
-        transform.localScale = new Vector3(radius, radius, 1);
-        Color color = spriteRenderer.color;
-        color.a = 0;
-        spriteRenderer.color = color;
+        slowFractions = new Dictionary<Rigidbody2D, SlowData>();
     }
-
+    
     private void Update()
     {
-        if (isActive)
+        if (Active())
         {
             SlowDown();
-            ChangeTransparency(maxAlpha*Time.deltaTime/alphaIncreaseTime);
         }
         else
         {
             SpeedUp();
-            ChangeTransparency(-maxAlpha * Time.deltaTime / alphaDecreaseTime);
         }
     }
 
-    void ChangeTransparency(float amount)
-    {
-        Color color = spriteRenderer.color;
-        if ( (amount < maxAlpha && color.a > 0) || (amount > 0 && color.a < maxAlpha)) {
-            color.a += amount;
-            color.a = Mathf.Min(color.a, maxAlpha);
-            color.a = Mathf.Max(color.a, 0);
-            spriteRenderer.color = color;
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        Rigidbody2D rb = collision.gameObject.GetComponent<Rigidbody2D>();
-        if (rb != null && collision.tag != "Player") {
-            if (slowFractions.ContainsKey(rb))
-                slowFractions[rb].isInside = true;
-            else {
-                slowFractions.Add(rb, new SlowData(true));
-            }
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        Rigidbody2D rb = collision.gameObject.GetComponent<Rigidbody2D>();
-        if (rb != null && slowFractions.ContainsKey(rb))
-        {
-            slowFractions[rb].isInside = false;
-        }
-    }
-
-    public void ChangeRadius(float amount)
-    {
-        radius += radiusChangeSpeed*amount;
-        radius = radius < maxRadius ? radius : maxRadius;
-        radius = radius > minRadius ? radius : minRadius;
-        transform.localScale = new Vector3(radius, radius, 1);
-    }
-
-    void SlowDown()
+    protected virtual void SlowDown()
     {
         float frac;
-        if (slowSpeed > 0)
-            frac = Time.deltaTime / slowSpeed;
+        if (slowDownSpeed > 0)
+            frac = Time.deltaTime / slowDownSpeed;
         else frac = slowFraction;
 
         List<Rigidbody2D> notInside = new List<Rigidbody2D>();
@@ -101,7 +38,7 @@ public class TimeSlow : MonoBehaviour {
         {
             if (!SlowDown(rb, frac))
             {
-                SpeedUp(rb, frac*slowSpeed/speedUpSpeed);
+                SpeedUp(rb, frac * slowDownSpeed / speedUpSpeed);
                 notInside.Add(rb);
             }
         }
@@ -113,10 +50,10 @@ public class TimeSlow : MonoBehaviour {
         }
     }
 
-    void SpeedUp()
+    protected virtual void SpeedUp()
     {
         float frac;
-        if (slowSpeed > 0)
+        if (slowDownSpeed > 0)
             frac = Time.deltaTime / speedUpSpeed;
         else frac = slowFraction;
 
@@ -134,14 +71,15 @@ public class TimeSlow : MonoBehaviour {
     }
 
     // For higher performance assumes that slowFractions contains rb
-    bool SlowDown(Rigidbody2D rb, float frac) {
+    protected bool SlowDown(Rigidbody2D rb, float frac)
+    {
         if (rb == null)
             return false;
         SlowData slowData = slowFractions[rb];
         if (slowData.isInside && slowData.slowFrac > slowFraction)
         {
             float frac_ = Mathf.Min(frac, slowData.slowFrac - slowFraction);
-            rb.velocity *= 1 - frac_/slowData.slowFrac;
+            rb.velocity *= 1 - frac_ / slowData.slowFrac;
             rb.angularVelocity *= 1 - frac_ / slowData.slowFrac;
 
             slowData.slowFrac -= frac_;
@@ -157,14 +95,15 @@ public class TimeSlow : MonoBehaviour {
     }
 
     // For higher performance assumes that slowFractions contains rb
-    bool SpeedUp(Rigidbody2D rb, float frac) {
+    protected bool SpeedUp(Rigidbody2D rb, float frac)
+    {
         if (rb == null)
             return false;
         SlowData slowData = slowFractions[rb];
         if (slowData.slowFrac < 1)
         {
-            float frac_ = Mathf.Min(frac, 1-slowData.slowFrac);
-            rb.velocity *= 1 + frac_/slowData.slowFrac;
+            float frac_ = Mathf.Min(frac, 1 - slowData.slowFrac);
+            rb.velocity *= 1 + frac_ / slowData.slowFrac;
             rb.angularVelocity *= 1 + frac_ / slowData.slowFrac;
 
             slowData.slowFrac += frac;
@@ -179,21 +118,16 @@ public class TimeSlow : MonoBehaviour {
         return slowData.isInside;
     }
 
-    public void Activate() { isActive = true; }
-    public void Deactivate() { isActive = false; }
-    public bool ChangeActive()
-    {
-        isActive = !isActive;
-        return isActive;
-    }
+    public abstract bool Active();
 }
 
-class SlowData
+public class SlowData
 {
     public bool isInside { get; set; }
     public float slowFrac { get; set; }
 
-    public SlowData(bool isInside) {
+    public SlowData(bool isInside)
+    {
         this.isInside = isInside;
         this.slowFrac = 1f;
     }

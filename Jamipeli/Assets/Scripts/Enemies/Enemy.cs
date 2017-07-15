@@ -5,6 +5,8 @@ using UnityEngine;
 public abstract class Enemy : MonoBehaviour, Dieable {
 
     public float speed;
+    public float acceleration;
+    public float angularAcceleration;
 
     public Vector3 targetDisplacement { get { if (target == null) return Vector2.zero; return target.transform.position - transform.position; } }
     public float targetDistance { get { if (target == null) return int.MaxValue; return targetDisplacement.magnitude; } }
@@ -18,13 +20,21 @@ public abstract class Enemy : MonoBehaviour, Dieable {
     private int _currentIndex;
     public int currentIndex { get { return _currentIndex; } }
 
+    public float speed_ { get { return speed * slowKeeper.slowFactor; } }
+    public float acceleration_ { get { return acceleration * slowKeeper.slowFactor; } }
+    public float angularAcceleration_ { get { return angularAcceleration * slowKeeper.slowFactor; } }
     public GameObject target;
 
+    SlowKeeper slowKeeper;
     void Awake()
     {
         this.rb = GetComponent<Rigidbody2D>();
-        this.gun = (GunInterface) GetComponent(typeof(GunInterface));
+        //this.gun = (GunInterface) GetComponent(typeof(GunInterface));
+        this.gun = GetComponent<GunInterface>();
         this.player = FindObjectOfType<PlayerMover>().gameObject;
+        this.slowKeeper = FindObjectOfType<SlowKeeper>();
+        if (slowKeeper == null)
+            slowKeeper = gameObject.AddComponent<SlowKeeper>();
     }
 
     void Update()
@@ -94,21 +104,21 @@ public abstract class Enemy : MonoBehaviour, Dieable {
     public virtual void Move(Vector2 movement)
     {
         transform.right = movement;
-        if (rb != null) rb.velocity = transform.right * speed;
+        if (rb != null) rb.velocity = Vector2.Lerp(rb.velocity, transform.right * speed_, acceleration_*Time.deltaTime);
     }
 
     public void Stop()
     {
         if (rb != null)
         {
-            rb.velocity = Vector2.zero;
-            rb.angularVelocity = 0;
+            rb.velocity = Vector2.Lerp(rb.velocity, Vector2.zero, acceleration_*Time.deltaTime);
+            rb.angularVelocity = Mathf.Lerp(rb.angularVelocity, 0, angularAcceleration_*Time.deltaTime);
         }
     }
 
     public virtual void Turn(Vector2 direction)
     {
-        transform.right = direction;
+        transform.right = Vector2.Lerp(transform.right, direction.normalized, angularAcceleration_*Time.deltaTime);
     }
     
     public virtual bool Shoot()

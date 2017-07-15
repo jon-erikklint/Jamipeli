@@ -8,15 +8,17 @@ public class PlayerMover : MonoBehaviour, Dieable {
     private Rigidbody2D rb;
     private Camera c;
     private Gun gun;
-    private TimeSlow slow;
+    private LocalTimeSlow slow;
 
     public float playerSpeed;
+    public float acceleration;
+    public float angularAcceleration;
 
 	void Start () {
         this.rb = GetComponent<Rigidbody2D>();
         this.c = Camera.main;
         this.gun = GetComponent<Gun>();
-        this.slow = GetComponentInChildren<TimeSlow>();
+        this.slow = GetComponentInChildren<LocalTimeSlow>();
 	}
 	
 	// Update is called once per frame
@@ -58,8 +60,8 @@ public class PlayerMover : MonoBehaviour, Dieable {
     {
         Vector2 movement = Vector2.zero;
 
-        movement.x = playerSpeed * Input.GetAxis("Horizontal");
-        movement.y = playerSpeed * Input.GetAxis("Vertical");
+        movement.x = Mathf.Lerp(movement.x, playerSpeed * Input.GetAxis("Horizontal"), acceleration*Time.deltaTime);
+        movement.y = Mathf.Lerp(movement.y, playerSpeed * Input.GetAxis("Vertical"), acceleration*Time.deltaTime);
 
         rb.velocity = movement;
         rb.angularVelocity = 0;
