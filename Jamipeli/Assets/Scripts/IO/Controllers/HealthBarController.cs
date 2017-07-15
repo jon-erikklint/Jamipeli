@@ -63,9 +63,12 @@ public class HealthBarController : MonoBehaviour {
 
         if(h < healthPoints.Count)
         {
-            RectTransform point = healthPoints[0];
-            healthPoints.Remove(point);
-            Destroy(point.gameObject);
+            while(h < healthPoints.Count)
+            {
+                RectTransform point = healthPoints[healthPoints.Count - 1];
+                healthPoints.Remove(point);
+                Destroy(point.gameObject);
+            }
         }
         else
         {

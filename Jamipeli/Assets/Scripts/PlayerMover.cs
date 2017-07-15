@@ -142,7 +142,6 @@ public class PlayerMover : MonoBehaviour, Dieable, HasHealth {
         float damaged = health.Damage(amount);
         slowCharge.IncreaseMaxHealth(slowtimeFromHealth * damaged);
         slowCharge.Heal(slowtimeFromHealth * damaged);
-        Debug.Log(damaged);
         return damaged;
     }
 
