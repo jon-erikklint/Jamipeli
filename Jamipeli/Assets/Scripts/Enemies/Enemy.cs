@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Enemy : MonoBehaviour, Dieable {
+public abstract class Enemy : MonoBehaviour, Dieable, HasHealth {
+
+    public float maxHealth;
 
     public float speed;
     public float acceleration;
@@ -26,12 +28,14 @@ public abstract class Enemy : MonoBehaviour, Dieable {
     public GameObject target;
 
     SlowKeeper slowKeeper;
+    Health health;
 
     void Awake()
     {
         this.rb = GetComponent<Rigidbody2D>();
         this.gun = GetComponent<GunInterface>();
         this.player = FindObjectOfType<PlayerMover>().gameObject;
+        health = new Health(maxHealth, this);
         this.slowKeeper = FindObjectOfType<SlowKeeper>();
         if (slowKeeper == null)
             slowKeeper = gameObject.AddComponent<SlowKeeper>();
@@ -126,6 +130,9 @@ public abstract class Enemy : MonoBehaviour, Dieable {
     {
         return gun.Shoot();
     }
+
+    public float Heal(float amount)   { return health.Heal(amount); }
+    public float Damage(float amount) { return health.Damage(amount); }
 
     public virtual void Kill()
     {
