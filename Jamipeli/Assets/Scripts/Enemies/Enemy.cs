@@ -27,7 +27,7 @@ public abstract class Enemy : MonoBehaviour, Dieable {
 
     SlowKeeper slowKeeper;
 
-    void Start()
+    void Awake()
     {
         this.rb = GetComponent<Rigidbody2D>();
         this.gun = GetComponent<GunInterface>();
@@ -109,6 +109,7 @@ public abstract class Enemy : MonoBehaviour, Dieable {
 
     public void Stop()
     {
+
         if (rb != null)
         {
             rb.velocity = Vector2.Lerp(rb.velocity, Vector2.zero, acceleration_*Time.deltaTime);

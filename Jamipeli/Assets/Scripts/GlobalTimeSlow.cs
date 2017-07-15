@@ -23,7 +23,6 @@ public class GlobalTimeSlow : TimeSlow {
     public void Add(Rigidbody2D rb)
     {
         slowFractions.Add(rb, new SlowData(true));
-        Debug.Log(slowFractions.Count);
     }
 
     public override bool Active()

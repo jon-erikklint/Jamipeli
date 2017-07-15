@@ -45,8 +45,9 @@ public class HealthBarController : MonoBehaviour {
     private void SetSlow()
     {
         float currentHealthWidth = fullHealthWidth - health.Ratio() * fullHealthWidth;
-        float currentWidth = (fullHealthSlowWidth + currentHealthWidth) * slow.Ratio() - borderSize * 2;
-        float currentLoc = borderSize + currentWidth;
+        float currentMaxWidth = fullHealthSlowWidth + currentHealthWidth;
+        float currentWidth = currentMaxWidth * slow.Ratio() - borderSize * 2;
+        float currentLoc = currentWidth / 2 + borderSize + currentMaxWidth - (currentWidth + 2 * borderSize);
 
         slowBar.sizeDelta = new Vector2(currentWidth, slowBar.sizeDelta.y);
         slowBar.anchoredPosition = new Vector3(currentLoc, 0);
