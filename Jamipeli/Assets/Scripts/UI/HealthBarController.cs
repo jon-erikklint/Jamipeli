@@ -23,7 +23,7 @@ public class HealthBarController : MonoBehaviour {
 	void Start () {
         PlayerMover p = FindObjectOfType<PlayerMover>();
         health = p.health;
-        slow = p.slowTime;
+        slow = p.slowCharge;
         slowTimeFromHealth = p.slowtimeFromHealth;
 
         slowBar = transform.Find("Slow").GetComponent<RectTransform>();

@@ -2,64 +2,58 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Health : MonoBehaviour {
+public class Health {
 
-    public bool kills = true;
-    Dieable dieableScript;
+    public float maxHealth;
+    public float health;
+    protected Dieable dieable;
 
-    private void Awake()
+    public Health(float maxHealth, Dieable dieable = null) : this(maxHealth, maxHealth, dieable) { }
+
+    public Health(float startHealth, float maxHealth, Dieable dieable = null)
     {
-        DoOnAwake();
-    }
-    private void Start()
-    {
-        dieableScript = gameObject.GetComponent<Dieable>();
-        if (dieableScript == null)
-        {
-            Debug.LogWarning("No script extending \"Dieable\" interface found!");
-            this.enabled = false;
-        }
-        else DoOnStart();
+        this.maxHealth = maxHealth;
+        this.health = startHealth;
+        this.dieable = dieable;
     }
 
-    public virtual void Initialize()
-    {}
-
-    private void Update()
-    {
-        DoOnUpdate();
-    }
-
-    public bool Heal(float amount)
-    {
-        bool success = Healing(amount);
-        if (kills && IsEmpty())
-            dieableScript.Kill();
-        return success;
-    }
-
-    public bool Damage(float amount)
-    {
-        bool success = Damaging(amount);
-        if (kills && IsEmpty())
-            dieableScript.Kill();
-        return success;
-    }
-
-    public abstract float Amount();
-    public abstract float Max();
+    public virtual float Amount() { return health; }
+    public virtual float Max() { return maxHealth; }
 
     public float Ratio()
     {
         return Amount() / Max();
     }
 
-    public virtual void DoOnAwake() { }
-    public virtual void DoOnStart() { }
-    public virtual void DoOnUpdate() { }
+    public float IncreaseMaxHealth(float amount)
+    {
+        return SetMaxHealth(maxHealth + amount);
+    }
 
-    public abstract bool Healing(float amount);
-    public abstract bool Damaging(float amount);
-    public abstract bool IsEmpty();
+    public virtual float SetMaxHealth(float amount)
+    {
+        maxHealth = amount;
+        float prev = health;
+        health = health < maxHealth ? health : amount;
+        return prev - health;
+    }
+
+    public virtual float Heal(float amount)
+    {
+        float next = health + amount;
+        health = next < maxHealth ? next : maxHealth;
+        return amount - (next - health);
+    }
+
+    public virtual float Damage(float amount)
+    {
+        float next = health - amount;
+        health = next > 0 ? next : 0;
+        if (dieable != null && this.IsEmpty())
+            dieable.Kill();
+        return amount - (health - next);
+    }
+    public virtual bool IsEmpty() { return Amount() <= 0; }
+    public virtual bool IsFull() { return Amount() >= Max(); }
 
 }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMover : MonoBehaviour, Dieable {
+public class PlayerMover : MonoBehaviour, Dieable, HasHealth {
 
     private Rigidbody2D rb;
     private Camera c;
@@ -18,8 +18,10 @@ public class PlayerMover : MonoBehaviour, Dieable {
     private float lastTeleport = Mathf.NegativeInfinity;
     private Vector3 mousePosition { get { return c.ScreenToWorldPoint(Input.mousePosition); } }
 
-    public Health health;
-    public Health slowTime;
+    public PlayerHealth health;
+    public Health slowCharge;
+    public int playerHealth = 3;
+    public float maxSlowTime = 150;
     public float slowtimeFromHealth;
 
 	void Start () {
@@ -28,6 +30,8 @@ public class PlayerMover : MonoBehaviour, Dieable {
         this.locSlow = GetComponentInChildren<LocalTimeSlow>();
         this.globSlow = GetComponentInChildren<GlobalTimeSlow>();
         this.gun = GetComponent<GunInterface>();
+        this.slowCharge = new Health(maxSlowTime);
+        this.health = new PlayerHealth(playerHealth, slowtimeFromHealth, slowCharge, this);
 	}
 	
 	// Update is called once per frame
