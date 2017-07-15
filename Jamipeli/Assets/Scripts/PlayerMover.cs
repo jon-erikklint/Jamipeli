@@ -7,7 +7,8 @@ public class PlayerMover : MonoBehaviour, Dieable {
 
     private Rigidbody2D rb;
     private Camera c;
-    private LocalTimeSlow slow;
+    private LocalTimeSlow locSlow;
+    private GlobalTimeSlow globSlow;
     private GunInterface gun;
 
     public float playerSpeed;
@@ -15,7 +16,8 @@ public class PlayerMover : MonoBehaviour, Dieable {
 	void Start () {
         this.rb = GetComponent<Rigidbody2D>();
         this.c = Camera.main;
-        this.slow = GetComponentInChildren<LocalTimeSlow>();
+        this.locSlow = GetComponentInChildren<LocalTimeSlow>();
+        this.globSlow = GetComponentInChildren<GlobalTimeSlow>();
         this.gun = GetComponent<GunInterface>();
 	}
 	
@@ -24,7 +26,8 @@ public class PlayerMover : MonoBehaviour, Dieable {
         this.SetSpeed();
         this.SetRotation();
         this.CheckShoot();
-        this.CheckSlow();
+        this.CheckLoclSlow();
+        this.CheckGlobalSlow();
         this.CheckSlowRadius();
     }
 
@@ -36,22 +39,28 @@ public class PlayerMover : MonoBehaviour, Dieable {
         }
     }
 
-    private void CheckSlow()
+    private void CheckGlobalSlow()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+            globSlow.Activate();
+    }
+
+    private void CheckLoclSlow()
     {
         if (Input.GetMouseButtonDown(1))
         {
-            slow.Activate();
+            locSlow.Activate();
         }
 
         if (Input.GetMouseButtonUp(1))
         {
-            slow.Deactivate();
+            locSlow.Deactivate();
         }
     }
 
     private void CheckSlowRadius()
     {
-        slow.ChangeRadius(Input.GetAxis("Mouse ScrollWheel"));
+        locSlow.ChangeRadius(Input.GetAxis("Mouse ScrollWheel"));
     }
 
     private void SetSpeed()

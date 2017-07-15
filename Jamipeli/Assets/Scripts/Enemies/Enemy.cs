@@ -26,10 +26,10 @@ public abstract class Enemy : MonoBehaviour, Dieable {
     public GameObject target;
 
     SlowKeeper slowKeeper;
-    void Awake()
+
+    void Start()
     {
         this.rb = GetComponent<Rigidbody2D>();
-        //this.gun = (GunInterface) GetComponent(typeof(GunInterface));
         this.gun = GetComponent<GunInterface>();
         this.player = FindObjectOfType<PlayerMover>().gameObject;
         this.slowKeeper = FindObjectOfType<SlowKeeper>();

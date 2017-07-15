@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Gun : MonoBehaviour {
+public class Gun : MonoBehaviour, GunInterface {
 
     public GameObject projectilePrefab;
 
@@ -13,12 +13,16 @@ public class Gun : MonoBehaviour {
 
     private Transform owner;
     private CircleCollider2D oc;
-    
+
+    private Creator creator;
+
 	void Start () {
         owner = transform;
         oc = GetComponent<CircleCollider2D>();
 
         lastShoot = long.MinValue;
+
+        creator = FindObjectOfType<Creator>();
 	}
 
     public bool Shoot()
@@ -64,7 +68,7 @@ public class Gun : MonoBehaviour {
 
     private GameObject CreateProjectile()
     {
-        return Instantiate(Projectile(), CreationPoint(), owner.rotation) as GameObject;
+        return creator.Instantiate(Projectile(), CreationPoint(), owner.rotation) as GameObject;
     }
 
     private void SetProjectileSpeed(GameObject proj)
