@@ -11,8 +11,6 @@ public class PlayerMover : MonoBehaviour, Dieable {
     private GunInterface gun;
 
     public float playerSpeed;
-    public float acceleration;
-    public float angularAcceleration;
 
 	void Start () {
         this.rb = GetComponent<Rigidbody2D>();
@@ -60,8 +58,8 @@ public class PlayerMover : MonoBehaviour, Dieable {
     {
         Vector2 movement = Vector2.zero;
 
-        movement.x = Mathf.Lerp(movement.x, playerSpeed * Input.GetAxis("Horizontal"), acceleration*Time.deltaTime);
-        movement.y = Mathf.Lerp(movement.y, playerSpeed * Input.GetAxis("Vertical"), acceleration*Time.deltaTime);
+        movement.x = playerSpeed * Input.GetAxis("Horizontal");
+        movement.y = playerSpeed * Input.GetAxis("Vertical");
 
         rb.velocity = movement;
         rb.angularVelocity = 0;
