@@ -23,13 +23,17 @@ public class PlayerMover : MonoBehaviour, Dieable, HasHealth {
     public int playerHealth = 3;
     public float maxSlowTime = 150;
     public float slowtimeFromHealth;
+    public float waitTime = 0.5f;
+    public float regenerateSpeed = 1;
 
     private GameManager gameManager;
+    private float slowLastActive;
 
     private void Awake()
     {
         this.slowCharge = new Health(maxSlowTime);
         this.health = new Health(playerHealth, this);
+        slowLastActive = Mathf.NegativeInfinity;
     }
 
     void Start () {
@@ -49,6 +53,7 @@ public class PlayerMover : MonoBehaviour, Dieable, HasHealth {
         this.CheckLocalSlow();
         this.CheckGlobalSlow();
         this.CheckSlowRadius();
+        this.CheckChargeSlow();
     }
 
     private void CheckShoot()
@@ -89,6 +94,21 @@ public class PlayerMover : MonoBehaviour, Dieable, HasHealth {
         if (Input.GetMouseButtonUp(1))
         {
             locSlow.Deactivate();
+        }
+    }
+
+    private void CheckChargeSlow()
+    {
+        if (locSlow.Active())
+        {
+            slowCharge.Damage(Time.deltaTime);
+            if (slowCharge.IsEmpty())
+                locSlow.Deactivate();
+            slowLastActive = Time.time;
+        }
+        else if(Time.time - slowLastActive > waitTime)
+        {
+            slowCharge.Heal(regenerateSpeed * Time.deltaTime);
         }
     }
 
