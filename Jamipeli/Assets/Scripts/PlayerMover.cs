@@ -24,7 +24,10 @@ public class PlayerMover : MonoBehaviour, Dieable, HasHealth {
     public float maxSlowTime = 150;
     public float slowtimeFromHealth;
 
+    private GameManager gameManager;
+
 	void Start () {
+        gameManager = FindObjectOfType<GameManager>();
         this.rb = GetComponent<Rigidbody2D>();
         this.c = Camera.main;
         this.locSlow = GetComponentInChildren<LocalTimeSlow>();
@@ -124,6 +127,6 @@ public class PlayerMover : MonoBehaviour, Dieable, HasHealth {
 
     public void Kill()
     {
-        Debug.Log("Auts! Pelaaja kuoli :(");
+        gameManager.EndGame();
     }
 }
