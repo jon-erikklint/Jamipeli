@@ -21,16 +21,18 @@ public class Gun : MonoBehaviour {
         lastShoot = long.MinValue;
 	}
 
-    public void Shoot()
+    public bool Shoot()
     {
-        if (!CanShoot()) return;
+        if (!CanShoot()) return false;
 
         GameObject projectile = CreateProjectile();
 
         SetProjectileSpeed(projectile);
+
+        return true;
     }
 
-    public bool CanShoot()
+    private bool CanShoot()
     {
         if(Time.time >= lastShoot + shootInterval)
         {

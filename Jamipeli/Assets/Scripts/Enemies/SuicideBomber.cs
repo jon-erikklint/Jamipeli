@@ -8,8 +8,6 @@ public class SuicideBomber : Enemy {
     public float startMoveRadius = 2;
     public float continueMoveRadius = 4;
 
-    public float speed = 1;
-
     public float triggerRadius = 2;
     public float triggerTime = 4;
     public Color triggeredColor = Color.red;
@@ -23,79 +21,31 @@ public class SuicideBomber : Enemy {
     public int damagePlayer = 1;
     public int damageEnemy = 2;
 
-    public Transform target;
-
     bool isMoving = false;
     bool isTriggered = false;
 
-    public Vector3 targetDisplacement { get { return target.transform.position - transform.position; } }
-    public float   sqrDistFromTarget  { get { return targetDisplacement.sqrMagnitude; } }
-    public float   distFromTarget     { get { return targetDisplacement.magnitude; } }
-
-    Vector4 triggeredColorVector;
-    Vector4 colorVector;
-    SpriteRenderer sRenderer;
-    Timer triggerTimer;
-
-    private void Start()
+    void Start()
     {
-        sRenderer = GetComponent<SpriteRenderer>();
-        if(sRenderer == null)
-            Debug.LogWarning("Object " + gameObject.name + ": SpriteRenderer not found, trigger animation won't work!");
+        SetStates(0, new Idle(this), new Exploder(this, triggerRadius, triggerTime, triggeredColor, triggeredAnimationSpeedStart, triggeredAnimationSpeedEnd, speedUpAnimationStartTime));
+        TargetPlayer();
+    }
+
+    public override void CheckStateChange()
+    {
+        if(currentIndex == 0)
+        {
+            if (TargetInDistance(startMoveRadius))
+            {
+                ChangeState(1);
+            }
+        }
         else
-            colorVector = ColorToVector(GetComponent<SpriteRenderer>().color);
-        
-        triggeredColorVector = ColorToVector(triggeredColor);
-
-        if (target == null)
-            target = FindObjectOfType<PlayerMover>().transform;
-
-        GameObject timerObject = new GameObject();
-        triggerTimer = timerObject.AddComponent<Timer>();
-        triggerTimer.AddAction(new DoOnTimeout(Kill));
-        triggerTimer.purpose = "Trigger timer";
-        timerObject.transform.parent = transform;
-    }
-
-    public override bool IsActing()
-    {
-        isTriggered = isTriggered || sqrDistFromTarget < triggerRadius * triggerRadius;
-        return isTriggered;
-    }
-
-    public override void Act() {
-        triggerTimer.StartTimer(triggerTime);
-        if (sRenderer != null)
-            Animate();
-    }
-
-    void Animate()
-    {
-        float timePassed = triggerTimer.timePassed;
-        float cosArg;
-        if (timePassed > speedUpAnimationStartTime)
-            cosArg = 2 * Mathf.PI * (speedUpAnimationStartTime * triggeredAnimationSpeedStart + (speedUpAnimationStartTime - timePassed) * triggeredAnimationSpeedEnd);
-        else
-            cosArg = 2 * Mathf.PI * timePassed * triggeredAnimationSpeedStart;
-
-        float fraction = 1 - Mathf.Cos(cosArg);
-        Debug.Log(fraction);
-        Vector4 newColorVector = colorVector + (triggeredColorVector - colorVector) * fraction;
-        sRenderer.color = VectorToColor(newColorVector);
-    }
-
-    public override bool IsMoving()
-    {
-        isMoving = isTriggered || sqrDistFromTarget < startMoveRadius*startMoveRadius || (isMoving && sqrDistFromTarget < continueMoveRadius);
-        return isMoving;
-    }
-
-    public override void Move()
-    {
-        transform.right = targetDisplacement;
-        Rigidbody2D rb = GetComponent<Rigidbody2D>();
-        if (rb != null)
-            rb.velocity = transform.right * speed;
+        {
+            if (!TargetInDistance(continueMoveRadius))
+            {
+                ChangeState(0);
+            }
+        }
     }
 
     public override void Kill()
@@ -119,15 +69,5 @@ public class SuicideBomber : Enemy {
         }
 
         Destroy(gameObject);
-    }
-
-    Color VectorToColor(Vector4 vec)
-    {
-        return new Color(vec.x, vec.y, vec.z, vec.w);
-    }
-
-    Vector4 ColorToVector(Color col)
-    {
-        return new Vector4(col.r, col.g, col.b, col.a);
     }
 }
