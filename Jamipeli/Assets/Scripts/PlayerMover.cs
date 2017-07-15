@@ -21,6 +21,8 @@ public class PlayerMover : MonoBehaviour, Dieable, HasHealth {
     public Health health;
     public Health slowCharge;
     public int playerHealth = 3;
+    public Color damageColor;
+    public float invincibilityTime = 0.5f;
     public float maxSlowTime = 150;
     public float slowtimeFromHealth;
     public float waitTime = 0.5f;
@@ -29,11 +31,22 @@ public class PlayerMover : MonoBehaviour, Dieable, HasHealth {
     private GameManager gameManager;
     private float slowLastActive;
 
+    private float lastHit;
+    private SpriteRenderer spriteRenderer;
+    private Vector4 damageColorVector;
+    private Vector4 colorVector;
+
     private void Awake()
     {
         this.slowCharge = new Health(maxSlowTime);
         this.health = new Health(playerHealth, this);
         slowLastActive = Mathf.NegativeInfinity;
+
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        damageColorVector = VectorColor.ColorToVector(damageColor);
+        colorVector = VectorColor.ColorToVector(spriteRenderer.color);
+
+        lastHit = Mathf.NegativeInfinity;
     }
 
     void Start () {
@@ -54,6 +67,12 @@ public class PlayerMover : MonoBehaviour, Dieable, HasHealth {
         this.CheckGlobalSlow();
         this.CheckSlowRadius();
         this.CheckChargeSlow();
+        this.DamageAnimation();
+    }
+
+    private void DamageAnimation()
+    {
+        spriteRenderer.color = VectorColor.VectorToColor(Vector4.Lerp(spriteRenderer.color, colorVector, 2 * Time.deltaTime / invincibilityTime));
     }
 
     private void CheckShoot()
@@ -159,9 +178,14 @@ public class PlayerMover : MonoBehaviour, Dieable, HasHealth {
 
     public float Damage(float amount)
     {
+        if (Time.time - lastHit < invincibilityTime)
+            return 0;
         float damaged = health.Damage(amount);
         slowCharge.IncreaseMaxHealth(slowtimeFromHealth * damaged);
         slowCharge.Heal(slowtimeFromHealth * damaged);
+
+        spriteRenderer.color = damageColor;
+        lastHit = Time.time;
         return damaged;
     }
 

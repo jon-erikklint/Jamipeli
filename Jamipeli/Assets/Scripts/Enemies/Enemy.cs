@@ -5,6 +5,8 @@ using UnityEngine;
 public abstract class Enemy : MonoBehaviour, Dieable, HasHealth {
 
     public float maxHealth;
+    public Color damageColor = Color.red;
+    public float invincibilityTime = 0.2f;
 
     public float speed;
     public float acceleration;
@@ -30,6 +32,11 @@ public abstract class Enemy : MonoBehaviour, Dieable, HasHealth {
     SlowKeeper slowKeeper;
     Health health;
 
+    SpriteRenderer spriteRenderer;
+    Vector4 damageColorVector;
+    Vector4 colorVector;
+
+    float lastHit;
     void Awake()
     {
         this.rb = GetComponent<Rigidbody2D>();
@@ -39,12 +46,31 @@ public abstract class Enemy : MonoBehaviour, Dieable, HasHealth {
         this.slowKeeper = FindObjectOfType<SlowKeeper>();
         if (slowKeeper == null)
             slowKeeper = gameObject.AddComponent<SlowKeeper>();
+
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        damageColorVector = VectorColor.ColorToVector(damageColor);
+        colorVector = VectorColor.ColorToVector(spriteRenderer.color);
+
+        lastHit = Mathf.NegativeInfinity;
+        DoOnAwake();
+    }
+
+    void Start()
+    {
+        DoOnStart();
     }
 
     void Update()
     {
         CheckStateChange();
         currentState.Update();
+        DamageAnimation();
+        DoOnUpdate();
+    }
+
+    protected virtual void DamageAnimation()
+    {
+        spriteRenderer.color = VectorColor.VectorToColor(Vector4.Lerp(spriteRenderer.color, colorVector, 2*Time.deltaTime/invincibilityTime));
     }
 
     public abstract void CheckStateChange();
@@ -131,11 +157,26 @@ public abstract class Enemy : MonoBehaviour, Dieable, HasHealth {
         return gun.Shoot();
     }
 
-    public float Heal(float amount)   { return health.Heal(amount); }
-    public float Damage(float amount) { return health.Damage(amount); }
+    public float Heal(float amount)
+    {
+        return health.Heal(amount);
+    }
+    public float Damage(float amount)
+    {
+        if (Time.time - lastHit < invincibilityTime)
+            return 0;
+        spriteRenderer.color = damageColor;
+        lastHit = Time.deltaTime;
+        return health.Damage(amount);
+    }
 
     public virtual void Kill()
     {
         Destroy(this.gameObject);
     }
+
+    public virtual void DoOnAwake() { }
+    public virtual void DoOnStart() { }
+    public virtual void DoOnUpdate() { }
+
 }
