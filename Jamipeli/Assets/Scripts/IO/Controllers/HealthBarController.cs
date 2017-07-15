@@ -73,7 +73,7 @@ public class HealthBarController : MonoBehaviour {
             {
                 RectTransform trs = Instantiate(healthPointPrefab, holder).GetComponent<RectTransform>();
                 trs.sizeDelta = new Vector2(fullHealthWidth / health.Max() - borderSize * 2, trs.sizeDelta.y);
-                trs.localPosition = new Vector3((trs.sizeDelta.x + borderSize * 2) * healthPoints.Count - trs.sizeDelta.x / 2 - borderSize, trs.localPosition.y);
+                trs.anchoredPosition = new Vector3(width/2 - (trs.sizeDelta.x + borderSize * 2)/2 - (trs.sizeDelta.x + borderSize * 2) * healthPoints.Count, 0);
                 healthPoints.Add(trs);
             }
         }
