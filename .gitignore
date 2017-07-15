@@ -4,7 +4,7 @@ Jamipeli/Library/**
 /[Tt]emp/
 /[Oo]bj/
 /[Bb]uild/
-/[Bb]uilds/
+**/Builds/**
 /Assets/AssetStoreTools*
 /test_Data/
 
