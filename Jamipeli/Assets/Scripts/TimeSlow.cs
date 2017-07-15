@@ -123,12 +123,15 @@ public class TimeSlow : MonoBehaviour {
 
     // For higher performance assumes that slowFractions contains rb
     bool SlowDown(Rigidbody2D rb, float frac) {
+        if (rb == null)
+            return false;
         SlowData slowData = slowFractions[rb];
         if (slowData.isInside && slowData.slowFrac > slowFraction)
         {
             float frac_ = Mathf.Min(frac, slowData.slowFrac - slowFraction);
             rb.velocity *= 1 - frac_/slowData.slowFrac;
             rb.angularVelocity *= 1 - frac_ / slowData.slowFrac;
+            Timer[] timers = GetComponentsInChildren<Timer>();
             slowData.slowFrac -= frac_;
             return true;
         }
@@ -137,6 +140,8 @@ public class TimeSlow : MonoBehaviour {
 
     // For higher performance assumes that slowFractions contains rb
     bool SpeedUp(Rigidbody2D rb, float frac) {
+        if (rb == null)
+            return false;
         SlowData slowData = slowFractions[rb];
         if (slowData.slowFrac < 1)
         {

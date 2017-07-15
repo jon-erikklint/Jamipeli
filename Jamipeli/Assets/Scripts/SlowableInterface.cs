@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Health : MonoBehaviour {
+public interface SlowableInterface {
 
-    int maxHealth;
-    
+    void SlowDown();
 
 }
