@@ -3,15 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Creator : MonoBehaviour {
-    public GameObject Instantiate(GameObject gameObject)
+    public delegate void Action(Rigidbody2D rb);
+    public event Action Event;
+
+    public GameObject Instantiate(GameObject gameObject, Vector3 position, Quaternion rotation)
     {
-        return Instantiate(gameObject);
+        GameObject obj = Object.Instantiate(gameObject, position, rotation);
+        Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
+        if (rb != null)
+            Event(rb);
+        return obj;
     }
 
-    public GameObject GameObjectWithRigidbody(string name = "New Gameobject")
+    public GameObject GameObjectWithRigidbody(float mass, string name = "New Gameobject")
     {
         GameObject gameObject = new GameObject(name);
-        gameObject.AddComponent<Rigidbody2D>();
+        Rigidbody2D rb = gameObject.AddComponent<Rigidbody2D>();
+        rb.mass = mass;
+        rb.gravityScale = 0;
+        Event(rb);
         return gameObject;
     }
 }

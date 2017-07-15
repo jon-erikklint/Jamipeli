@@ -7,12 +7,16 @@ public class PlayerMover : MonoBehaviour, Dieable {
 
     private Rigidbody2D rb;
     private Camera c;
-    private LocalTimeSlow slow;
+    private LocalTimeSlow locSlow;
+    private GlobalTimeSlow globSlow;
     private GunInterface gun;
 
     public float playerSpeed;
-    public float acceleration;
-    public float angularAcceleration;
+    public int globalSlows = 1;
+    public float teleportCooldown = 0.5f;
+
+    private float lastTeleport = Mathf.NegativeInfinity;
+    private Vector3 mousePosition { get { return c.ScreenToWorldPoint(Input.mousePosition); } }
 
     public Health health;
     public Health slowTime;
@@ -21,7 +25,8 @@ public class PlayerMover : MonoBehaviour, Dieable {
 	void Start () {
         this.rb = GetComponent<Rigidbody2D>();
         this.c = Camera.main;
-        this.slow = GetComponentInChildren<LocalTimeSlow>();
+        this.locSlow = GetComponentInChildren<LocalTimeSlow>();
+        this.globSlow = GetComponentInChildren<GlobalTimeSlow>();
         this.gun = GetComponent<GunInterface>();
 	}
 	
@@ -30,7 +35,8 @@ public class PlayerMover : MonoBehaviour, Dieable {
         this.SetSpeed();
         this.SetRotation();
         this.CheckShoot();
-        this.CheckSlow();
+        this.CheckLocalSlow();
+        this.CheckGlobalSlow();
         this.CheckSlowRadius();
     }
 
@@ -42,30 +48,50 @@ public class PlayerMover : MonoBehaviour, Dieable {
         }
     }
 
-    private void CheckSlow()
+    private void CheckGlobalSlow()
     {
+        if (globalSlows > 0 && Input.GetKeyDown(KeyCode.Space) && !globSlow.Active())
+        {
+            globSlow.Activate();
+            locSlow.Deactivate();
+            globalSlows--;
+        }
+    }
+
+    private void CheckLocalSlow()
+    {
+        if(globSlow.Active())
+        {
+            if (Time.time - lastTeleport > teleportCooldown && Input.GetMouseButtonDown(1))
+            {
+                Teleport(mousePosition);
+                lastTeleport = Time.time;
+            }
+            return;
+        }
+
         if (Input.GetMouseButtonDown(1))
         {
-            slow.Activate();
+            locSlow.Activate();
         }
 
         if (Input.GetMouseButtonUp(1))
         {
-            slow.Deactivate();
+            locSlow.Deactivate();
         }
     }
 
     private void CheckSlowRadius()
     {
-        slow.ChangeRadius(Input.GetAxis("Mouse ScrollWheel"));
+        locSlow.ChangeRadius(Input.GetAxis("Mouse ScrollWheel"));
     }
 
     private void SetSpeed()
     {
         Vector2 movement = Vector2.zero;
 
-        movement.x = Mathf.Lerp(movement.x, playerSpeed * Input.GetAxis("Horizontal"), acceleration*Time.deltaTime);
-        movement.y = Mathf.Lerp(movement.y, playerSpeed * Input.GetAxis("Vertical"), acceleration*Time.deltaTime);
+        movement.x = playerSpeed * Input.GetAxis("Horizontal");
+        movement.y = playerSpeed * Input.GetAxis("Vertical");
 
         rb.velocity = movement;
         rb.angularVelocity = 0;
@@ -73,8 +99,13 @@ public class PlayerMover : MonoBehaviour, Dieable {
 
     private void SetRotation()
     {
-        Vector2 worldLocation = c.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 worldLocation = mousePosition;
         transform.eulerAngles = new Vector3(0, 0, AngleInDeg(transform.position, worldLocation));
+    }
+
+    private void Teleport(Vector2 position)
+    {
+        transform.position = position;
     }
 
     private float AngleInRad(Vector3 vec1, Vector3 vec2)
