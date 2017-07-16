@@ -14,11 +14,11 @@ public class TurretEnemy : Enemy
     }
 
     public override void CheckStateChange() {
-        if (currentIndex == 0 && !TargetInDistance(shootDistance))
+        if (currentIndex == 0 && !TargetVisibleAndClose(shootDistance))
         {
             ChangeState(1);
         }
-        else if (currentIndex == 1 && TargetInDistance(shootDistance))
+        else if (currentIndex == 1 && TargetVisibleAndClose(shootDistance))
         {
             ChangeState(0);
         }
