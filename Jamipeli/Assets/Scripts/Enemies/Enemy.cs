@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public delegate void DoOnDestroy();
+
 public abstract class Enemy : MonoBehaviour, Dieable, HasHealth {
 
     public float maxHealth;
@@ -37,6 +39,8 @@ public abstract class Enemy : MonoBehaviour, Dieable, HasHealth {
     Vector4 colorVector;
 
     float lastHit;
+
+    public event DoOnDestroy Destroyed;
     void Awake()
     {
         this.rb = GetComponent<Rigidbody2D>();
@@ -173,6 +177,17 @@ public abstract class Enemy : MonoBehaviour, Dieable, HasHealth {
     public virtual void Kill()
     {
         Destroy(this.gameObject);
+    }
+
+    public void AddDestroyListener(DoOnDestroy doIt)
+    {
+        Destroyed += doIt;
+    }
+
+    private void OnDestroy()
+    {
+        Destroyed();
+        Destroyed = null;
     }
 
     public virtual void DoOnAwake() { }
