@@ -56,7 +56,7 @@ public class Gun : MonoBehaviour, GunInterface {
 
     protected Vector2 FacedDirection()
     {
-        return (Quaternion.AngleAxis(owner.eulerAngles.z, Vector3.forward) * Vector3.right).normalized;
+        return transform.right;// (Quaternion.AngleAxis(owner.eulerAngles.z, Vector3.forward) * Vector3.right).normalized;
     }
 
     public GameObject Projectile()

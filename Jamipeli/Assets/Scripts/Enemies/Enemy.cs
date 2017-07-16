@@ -144,7 +144,8 @@ public abstract class Enemy : MonoBehaviour, Dieable, HasHealth
 
     public virtual void Move(Vector2 movement)
     {
-        transform.right = movement;
+        Debug.Log(Time.time);
+        transform.right = Vector2.Lerp(transform.right, movement, angularAcceleration_*Time.deltaTime);
         if (rb != null) rb.velocity = Vector2.Lerp(rb.velocity, transform.right * speed_, acceleration_*Time.deltaTime);
     }
 
