@@ -41,6 +41,7 @@ public abstract class Enemy : MonoBehaviour, Dieable, HasHealth
     Vector4 colorVector;
 
     float lastHit;
+    public bool isDead = false;
 
     public event DoOnDestroy Destroyed;
     void Awake()
@@ -90,6 +91,12 @@ public abstract class Enemy : MonoBehaviour, Dieable, HasHealth
             this.states.Add(state);
         }
 
+        ChangeState(startIndex);
+    }
+
+    public void SetStates(int startIndex, List<AIState> states)
+    {
+        this.states = states;
         ChangeState(startIndex);
     }
 
@@ -184,6 +191,7 @@ public abstract class Enemy : MonoBehaviour, Dieable, HasHealth
 
     public virtual void Kill()
     {
+        isDead = true;
         Destroy(this.gameObject);
     }
 

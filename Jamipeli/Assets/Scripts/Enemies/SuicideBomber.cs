@@ -78,7 +78,7 @@ public class SuicideBomber : Enemy {
         //            health.Damage(damageEnemy);
         //    }
         //}
-
+        isDead = true;
         bomb.Explode(this);
     }
 }
