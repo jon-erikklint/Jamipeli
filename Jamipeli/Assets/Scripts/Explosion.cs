@@ -36,7 +36,6 @@ public class Explosion : MonoBehaviour {
 
     private void Animate()
     {
-        Debug.Log(timer.ready);
         Vector4 whiteVector = VectorColor.ColorToVector(Color.white);
         sRenderer.color = VectorColor.VectorToColor(whiteVector*(1-timer.timePassed/fadeoutTime));
         if (timer.ready)
