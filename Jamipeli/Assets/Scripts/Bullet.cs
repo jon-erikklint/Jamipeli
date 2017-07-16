@@ -70,7 +70,9 @@ public class Bullet : MonoBehaviour {
         fatalForEnemy = true;
     }
 
-    private bool IsFatal()
+    public virtual bool IsFatalForEnemies() { return IsFatal() && fatalForEnemy; }
+
+    public virtual bool IsFatal()
     {
         return speed > fatalSpeed;
     }

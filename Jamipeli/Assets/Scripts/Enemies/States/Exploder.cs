@@ -65,6 +65,7 @@ public class Exploder : AIState
 
     private void Explode()
     {
+        Debug.Log("wut");
         enemy.Kill();
     }
 

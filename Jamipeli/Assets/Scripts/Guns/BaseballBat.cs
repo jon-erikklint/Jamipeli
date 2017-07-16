@@ -78,6 +78,7 @@ public class BaseballBat : MonoBehaviour, GunInterface {
         hitForce *= Math.Max(rb.velocity.magnitude, hitStrength);
         
         rb.velocity = hitForce;
+        rb.transform.right = hitForce;
 
         Bullet bullet = toHit.GetComponent<Bullet>();
         if (bullet != null)

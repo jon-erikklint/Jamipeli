@@ -18,39 +18,67 @@ public class SuicideBomber : Enemy {
     public int damagePlayer = 1;
     public int damageEnemy = 2;
 
+    public Sprite explosionSprite;
+
     bool isMoving = false;
     bool isTriggered = false;
 
+    Explosive bomb;
+
     void Start()
     {
+        InitializeBomb();
         SetStates(0, new Exploder(this, triggerRadius, triggerTime, triggeredColor, triggeredAnimationSpeedStart, triggeredAnimationSpeedEnd, speedUpAnimationStartTime));
         TargetPlayer();
+    }
+
+    private void InitializeBomb()
+    {
+        bomb = gameObject.AddComponent<Explosive>();
+        bomb.triggerRadius  = this.triggerRadius ;
+        bomb.triggerTime    = this.triggerTime   ;  
+        bomb.triggeredColor = this.triggeredColor;
+
+        bomb.damageRadius   = this.damageRadius  ; 
+        bomb.knockBack      = this.knockBack     ;    
+
+        bomb.damagePlayer   = this.damagePlayer  ;
+        bomb.damageEnemy    = this.damageEnemy;
+
+        bomb.triggeredAnimationSpeedStart = this.triggeredAnimationSpeedStart;
+        bomb.triggeredAnimationSpeedEnd = this.triggeredAnimationSpeedEnd;
+        bomb.speedUpAnimationStartTime = this.speedUpAnimationStartTime;
+
+        bomb.size = 1.9f;
+
+        bomb.explosionSprite = this.explosionSprite;
+        bomb.owner = this;
     }
 
     public override void CheckStateChange(){}
 
     public override void Kill()
     {
-        Collider2D[] cols = Physics2D.OverlapCircleAll(transform.position, damageRadius);
-        for (int i = 0; i < cols.Length; i++)
-        {
-            if (cols[i].gameObject == this.gameObject)
-                continue;
-            Rigidbody2D rb = cols[i].GetComponent<Rigidbody2D>();
-            if (rb == null)
-                continue;
-            Vector3 dir = (rb.transform.position - transform.position).normalized;
-            rb.AddForce(dir*knockBack, ForceMode2D.Impulse);
-            HasHealth health = rb.GetComponent<HasHealth>();
-            if (health != null)
-            {
-                if (cols[i].tag == "Player")
-                    health.Damage(damagePlayer);
-                else
-                    health.Damage(damageEnemy);
-            }
-        }
+        //Collider2D[] cols = Physics2D.OverlapCircleAll(transform.position, damageRadius);
+        //for (int i = 0; i < cols.Length; i++)
+        //{
+        //    if (cols[i].gameObject == this.gameObject)
+        //        continue;
+        //    Rigidbody2D rb = cols[i].GetComponent<Rigidbody2D>();
+        //    if (rb == null)
+        //        continue;
+        //    Vector3 dir = (rb.transform.position - transform.position).normalized;
+        //    rb.AddForce(dir * knockBack, ForceMode2D.Impulse);
+        //    HasHealth health = rb.GetComponent<HasHealth>();
+        //    if (health != null)
+        //    {
+        //        if (cols[i].tag == "Player")
+        //            health.Damage(damagePlayer);
+        //        else
+        //            health.Damage(damageEnemy);
+        //    }
+        //}
 
-        Destroy(gameObject);
+        bomb.Explode(this);
     }
 }
