@@ -53,12 +53,14 @@ public class SuicideBomber : Enemy {
         Collider2D[] cols = Physics2D.OverlapCircleAll(transform.position, damageRadius);
         for (int i = 0; i < cols.Length; i++)
         {
+            if (cols[i].gameObject == this.gameObject)
+                continue;
             Rigidbody2D rb = cols[i].GetComponent<Rigidbody2D>();
             if (rb == null)
                 continue;
             Vector3 dir = (rb.transform.position - transform.position).normalized;
             rb.AddForce(dir*knockBack, ForceMode2D.Impulse);
-            Health health = rb.GetComponent<Health>();
+            HasHealth health = rb.GetComponent<HasHealth>();
             if (health != null)
             {
                 if (cols[i].tag == "Player")

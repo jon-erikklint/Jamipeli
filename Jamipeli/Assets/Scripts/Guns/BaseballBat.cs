@@ -75,6 +75,10 @@ public class BaseballBat : MonoBehaviour, GunInterface {
         hitForce *= hitStrength;
 
         toHit.GetComponent<Rigidbody2D>().AddForce(hitForce, ForceMode2D.Impulse);
+
+        Bullet bullet = toHit.GetComponent<Bullet>();
+        if (bullet != null)
+            bullet.MakeFatalForEnemies();
     }
 
     private Vector2 VectorToObject(GameObject o)
