@@ -11,10 +11,13 @@ public class Turret : AIState
 
     public override void Activate()
     {
+        enemy.TargetPlayer();
     }
 
     public override void Update()
     {
         enemy.Shoot();
+        enemy.TurnToTarget();
+        enemy.Stop();
     }
 }

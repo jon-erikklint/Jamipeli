@@ -13,10 +13,12 @@ public class Wave  {
 
     public int enemies;
 
-    public DoOnWaveEnded WaveEnded;
-
-	public Wave(float spawnRate = 10, int spawnAmount = 0)
+    public delegate DoOnWaveEnded WaveEnded();
+    event DoOnWaveEnded End;
+	public Wave(float spawnRate, int spawnAmount, DoOnWaveEnded doOnEnd)
     {
+        End += doOnEnd;
+
         this.spawnRate = spawnRate;
         this.spawnAmount = spawnAmount;
 
@@ -26,8 +28,14 @@ public class Wave  {
 
     public void AddEnemy(string name, int amount)
     {
-        if (enemyTypes.ContainsKey(name)) amount += enemyTypes[name];
-        enemyTypes.Add(name, amount);
+        if (enemyTypes.ContainsKey(name))
+        {
+            enemyTypes[name] += amount;
+        }
+        else
+        {
+            enemyTypes.Add(name, amount);
+        }
         enemies += amount;
     }
 
@@ -44,7 +52,7 @@ public class Wave  {
                 }
                 else
                 {
-                    enemyTypes.Add(key, enemyTypes[key] - 1);
+                    enemyTypes[key] --;
                 }
 
                 enemies--;
@@ -55,9 +63,9 @@ public class Wave  {
         return "";
     }
 
-    private void EndWave()
+    public void EndWave()
     {
-        WaveEnded();
+        End();
     }
 
 }

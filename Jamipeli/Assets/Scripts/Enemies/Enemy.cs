@@ -131,6 +131,11 @@ public abstract class Enemy : MonoBehaviour, Dieable, HasHealth {
         Move(targetDisplacement);
     }
 
+    public void TurnToTarget()
+    {
+        Turn(targetDisplacement);
+    }
+
     public virtual void Move(Vector2 movement)
     {
         transform.right = movement;

@@ -71,10 +71,12 @@ public class BaseballBat : MonoBehaviour, GunInterface {
 
     private void Hit(GameObject toHit)
     {
-        Vector2 hitForce = VectorToObject(toHit);
-        hitForce *= hitStrength;
+        Rigidbody2D rb = toHit.GetComponent<Rigidbody2D>();
 
-        toHit.GetComponent<Rigidbody2D>().AddForce(hitForce, ForceMode2D.Impulse);
+        Vector2 hitForce = VectorToObject(toHit);
+        hitForce *= Math.Max(rb.velocity.magnitude, hitStrength);
+
+        rb.velocity = hitForce;
     }
 
     private Vector2 VectorToObject(GameObject o)
