@@ -29,6 +29,11 @@ public class BurstShooter : AIState {
         shootTimer.AddAction(new DoOnTimeout(Shoot));
     }
 
+    public override void Update()
+    {
+        enemy.MoveTowardsTarget();
+    }
+
     public override void Activate()
     {
         burstTimer.StartTimer(burstInterval, true);

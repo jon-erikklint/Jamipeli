@@ -18,6 +18,6 @@ public class Turret : AIState
     {
         enemy.Shoot();
         enemy.TurnToTarget();
-        enemy.Stop();
+        enemy.MoveTowardsTarget();
     }
 }
