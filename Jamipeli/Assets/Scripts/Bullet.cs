@@ -18,8 +18,10 @@ public class Bullet : MonoBehaviour {
     Rigidbody2D bulletRb;
     SpriteRenderer bulletRenderer;
     float lastHit;
-    float speed { get { return bulletRb.velocity.magnitude; } }
+    float speed { get { return velocity.magnitude; } }
     bool fatalForEnemy = false;
+
+    Vector2 velocity;
 
     void Awake() {
         Transform player = FindObjectOfType<PlayerMover>().transform;
@@ -27,6 +29,8 @@ public class Bullet : MonoBehaviour {
 
         bulletRb = GetComponent<Rigidbody2D>();
         bulletRenderer = GetComponent<SpriteRenderer>();
+
+        velocity = Vector2.zero;
 
         lastHit = Time.time;
     }
@@ -39,11 +43,17 @@ public class Bullet : MonoBehaviour {
             bulletRenderer.color = fatalForEnemy ? fatalForEnemyColor : fatalColor; 
     }
 
+    private void FixedUpdate()
+    {
+        velocity = bulletRb.velocity;
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         GameObject obj = collision.gameObject;
         if (obj.tag == "Bullet" && obj.tag != "Wall")
             return;
+        
 
         if (obj.tag == "Wall" || (Time.time - lastHit > safeTime && IsFatal()))
         {
