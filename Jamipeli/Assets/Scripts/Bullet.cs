@@ -62,7 +62,6 @@ public class Bullet : MonoBehaviour {
                 health.Damage(damage);
             Destroy(gameObject);
         }
-        Debug.Log((Time.time - lastHit > safeTime) + ", " + IsFatal());
         lastHit = Time.deltaTime;
     }
 

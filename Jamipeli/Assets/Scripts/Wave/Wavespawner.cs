@@ -15,6 +15,8 @@ public class Wavespawner : MonoBehaviour {
     private List<Transform> spawns;
 
     private Timer miniWaveTimer;
+    private int spawned;
+    private bool spawning;
     private Wave wave;
 
 	void Start () {
@@ -44,6 +46,8 @@ public class Wavespawner : MonoBehaviour {
         miniWaveTimer.purpose = "Trigger timer";
         timerObject.transform.parent = transform;
 
+        spawned = 0;
+        spawning = true;
         SpawnWave();
     }
 
@@ -55,7 +59,9 @@ public class Wavespawner : MonoBehaviour {
         while (leftToSpawn > 0 && availableSpawns.Count > 0 && wave.enemies > 0)
         {
             GameObject enemy = RandomEnemy();
+            enemy.GetComponent<Enemy>().AddDestroyListener(new DoOnDestroy(SpawnedDie));
             SetSpawn(enemy, availableSpawns);
+            spawned++;
             leftToSpawn--;
         }
 
@@ -65,7 +71,7 @@ public class Wavespawner : MonoBehaviour {
         }
         else
         {
-            wave.EndWave();
+            spawning = false;
         }
     }
 
@@ -88,5 +94,14 @@ public class Wavespawner : MonoBehaviour {
     private int Rand(int max)
     {
         return (int) Mathf.Floor(Random.value * max);
+    }
+
+    public void SpawnedDie()
+    {
+        spawned--;
+        if(!spawning && spawned == 0)
+        {
+            wave.EndWave();
+        }
     }
 }

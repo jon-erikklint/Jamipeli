@@ -8,14 +8,15 @@ public class WaveDefiner : MonoBehaviour {
 
     private Wavespawner spawner;
 
-    private int waveNumber;
+    public int waveNumber { get { return _waveNumber; } }
+    private int _waveNumber;
     private float startTime;
     private bool spawning;
 
 	void Start () {
         spawner = GetComponent<Wavespawner>();
 
-        waveNumber = 0;
+        _waveNumber = 0;
         spawning = false;
 
         startTime = float.MinValue;
@@ -35,9 +36,9 @@ public class WaveDefiner : MonoBehaviour {
 
     void SpawnWave()
     {
-        waveNumber++;
-        Wave wave = new Wave(10 / waveNumber, (int)Mathf.Ceil(Mathf.Log(waveNumber * 2)), new DoOnWaveEnded(WaveEnded));
-        wave.AddEnemy("soldier", waveNumber);
+        _waveNumber++;
+        Wave wave = new Wave(10 / _waveNumber, (int)Mathf.Ceil(Mathf.Log(_waveNumber * 2)), new DoOnWaveEnded(WaveEnded));
+        wave.AddEnemy("soldier", _waveNumber);
 
         spawning = true;
 

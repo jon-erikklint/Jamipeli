@@ -47,7 +47,7 @@ public class BaseballBat : MonoBehaviour, GunInterface {
 
         foreach(Collider2D hit in hits)
         {
-            if (Vector2.Dot(VectorToObject(hit.gameObject), transform.right.normalized) >= cosfov && !hit.gameObject.Equals(gameObject))
+            if (Vector2.Dot(VectorToObject(hit.gameObject), transform.right.normalized) >= cosfov && !hit.gameObject.Equals(gameObject) && !hit.gameObject.tag.Equals("Wall"))
             {
                 toHit.Add(hit.gameObject);
             }
@@ -73,7 +73,8 @@ public class BaseballBat : MonoBehaviour, GunInterface {
     {
         Rigidbody2D rb = toHit.GetComponent<Rigidbody2D>();
 
-        Vector2 hitForce = VectorToObject(toHit);
+        Vector2 hitForce = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - toHit.transform.position);
+        hitForce = hitForce.normalized;
         hitForce *= Math.Max(rb.velocity.magnitude, hitStrength);
         
         rb.velocity = hitForce;
