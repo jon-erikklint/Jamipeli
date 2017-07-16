@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public delegate void DoOnWaveEnded();
+
 public class Wave  {
 
     public Dictionary<string, int> enemyTypes;
@@ -11,7 +13,9 @@ public class Wave  {
 
     public int enemies;
 
-	public Wave(float spawnRate, int spawnAmount)
+    public DoOnWaveEnded WaveEnded;
+
+	public Wave(float spawnRate = 10, int spawnAmount = 0)
     {
         this.spawnRate = spawnRate;
         this.spawnAmount = spawnAmount;
@@ -50,4 +54,10 @@ public class Wave  {
 
         return "";
     }
+
+    private void EndWave()
+    {
+        WaveEnded();
+    }
+
 }

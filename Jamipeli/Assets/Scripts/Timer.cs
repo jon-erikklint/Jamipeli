@@ -49,13 +49,10 @@ public class Timer : MonoBehaviour
         }
     }
 
-    public bool StartTimer(float time, DoOnTimeout action = null, bool force = false)
+    public bool StartTimer(float time, bool force = false)
     {
         if (running_ && !force)
             return false;
-
-        if (action != null)
-            actionList += action;
 
         running_ = true;
         hasEnded_ = false;

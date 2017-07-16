@@ -11,7 +11,7 @@ public abstract class AIState {
         this.enemy = enemy;
     }
 
-    public abstract void Activate();
-
-    public abstract void Update();
+    public virtual void Activate() { }
+    public virtual void Deactivate() { }
+    public virtual void Update() { }
 }

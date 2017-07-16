@@ -37,7 +37,7 @@ public class BaseballBat : MonoBehaviour, GunInterface {
         
     }
 
-    public bool Shoot()
+    public bool Shoot(float angle)
     {
         if (Time.time < lastShot + cooldown) return false;
         

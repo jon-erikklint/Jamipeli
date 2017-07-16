@@ -25,13 +25,13 @@ public class Gun : MonoBehaviour, GunInterface {
         creator = FindObjectOfType<Creator>();
 	}
 
-    public bool Shoot()
+    public bool Shoot(float angle)
     {
         if (!CanShoot()) return false;
 
         GameObject projectile = CreateProjectile();
 
-        SetProjectileSpeed(projectile);
+        SetProjectileSpeed(projectile, angle);
 
         return true;
     }
@@ -71,17 +71,29 @@ public class Gun : MonoBehaviour, GunInterface {
         return creator.Instantiate(Projectile(), CreationPoint(), owner.rotation) as GameObject;
     }
 
-    private void SetProjectileSpeed(GameObject proj)
+    private void SetProjectileSpeed(GameObject proj, float angle)
     {
         Rigidbody2D projbody = proj.GetComponent<Rigidbody2D>();
         
-        Vector2 projectileVelocity = ShootForce();
+        Vector2 projectileVelocity = ShootForce(angle);
 
         projbody.AddForce(projectileVelocity, ForceMode2D.Impulse);
     }
 
-    public Vector2 ShootForce()
+    public Vector2 ShootForce(float angle)
     {
-        return FacedDirection() * shootForceMultiplier;
+        return Rotate(FacedDirection(), angle) * shootForceMultiplier;
+    }
+
+    private Vector2 Rotate(Vector2 v, float degrees)
+    {
+        float sin = Mathf.Sin(degrees * Mathf.Deg2Rad);
+        float cos = Mathf.Cos(degrees * Mathf.Deg2Rad);
+
+        float tx = v.x;
+        float ty = v.y;
+        v.x = (cos * tx) - (sin * ty);
+        v.y = (sin * tx) + (cos * ty);
+        return v;
     }
 }

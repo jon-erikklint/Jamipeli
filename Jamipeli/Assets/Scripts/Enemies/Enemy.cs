@@ -152,9 +152,9 @@ public abstract class Enemy : MonoBehaviour, Dieable, HasHealth {
         transform.right = Vector2.Lerp(transform.right, direction.normalized, angularAcceleration_*Time.deltaTime);
     }
     
-    public virtual bool Shoot()
+    public virtual bool Shoot(float angle = 0)
     {
-        return gun.Shoot();
+        return gun.Shoot(angle);
     }
 
     public float Heal(float amount)

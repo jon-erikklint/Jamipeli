@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface GunInterface {
 
-    bool Shoot();
+    bool Shoot(float angle = 0);
 }
