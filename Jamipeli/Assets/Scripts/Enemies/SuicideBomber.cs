@@ -5,9 +5,6 @@ using UnityEngine;
 
 public class SuicideBomber : Enemy {
 
-    public float startMoveRadius = 2;
-    public float continueMoveRadius = 4;
-
     public float triggerRadius = 2;
     public float triggerTime = 4;
     public Color triggeredColor = Color.red;
@@ -26,27 +23,11 @@ public class SuicideBomber : Enemy {
 
     void Start()
     {
-        SetStates(0, new Idle(this), new Exploder(this, triggerRadius, triggerTime, triggeredColor, triggeredAnimationSpeedStart, triggeredAnimationSpeedEnd, speedUpAnimationStartTime));
+        SetStates(0, new Exploder(this, triggerRadius, triggerTime, triggeredColor, triggeredAnimationSpeedStart, triggeredAnimationSpeedEnd, speedUpAnimationStartTime));
         TargetPlayer();
     }
 
-    public override void CheckStateChange()
-    {
-        if(currentIndex == 0)
-        {
-            if (TargetInDistance(startMoveRadius))
-            {
-                ChangeState(1);
-            }
-        }
-        else
-        {
-            if (!TargetInDistance(continueMoveRadius))
-            {
-                ChangeState(0);
-            }
-        }
-    }
+    public override void CheckStateChange(){}
 
     public override void Kill()
     {
