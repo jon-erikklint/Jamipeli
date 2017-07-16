@@ -8,7 +8,7 @@ public class CameraHandler : MonoBehaviour
     public float howFarStart = 1.5f;          // How high the camera is at spawn
     public float zoomOutFactor = 0.15f;     // How much camera zooms out in movement
     public float zoomOutSpeed = 7f;         // How quickly zooming happens
-    public float smoothness = 10.0f;         // How smooth the camera moves - lower value, smoother camera
+    public float smoothness = 10f;         // How smooth the camera moves - lower value, smoother camera
     public float mouseSensitivity = 0f;   // How strongly camera reacts to mouse position. Must be within range ]-1,1[
     public float mouseSmoothness = 7f;      // How quickly camera reacts to mouse position. Must be >0.
 
