@@ -8,6 +8,12 @@ public class GlobalTimeSlow : TimeSlow {
 
     float startingTime = Mathf.NegativeInfinity;
 
+    public Color effectColor = Color.yellow;
+    public Sprite effectSprite;
+    SpriteRenderer effectRenderer;
+    Vector4 colorVector;
+    Vector4 whiteVector;
+    Transform cameraTransform;
     void Start()
     {
         Rigidbody2D[] rbs = FindObjectsOfType<Rigidbody2D>();
@@ -18,6 +24,35 @@ public class GlobalTimeSlow : TimeSlow {
         }
         Creator creator = FindObjectOfType<Creator>();
         creator.Event += Add;
+        GameObject worldSpriteRenderer = new GameObject();
+        effectRenderer = worldSpriteRenderer.AddComponent<SpriteRenderer>();
+        effectRenderer.sprite = effectSprite;
+
+        colorVector = VectorColor.ColorToVector(effectColor);
+        whiteVector = VectorColor.ColorToVector(new Color(1,1,1,0));
+        cameraTransform = FindObjectOfType<Camera>().transform;
+    }
+
+    private void Update()
+    {
+        ColorEffect();
+    }
+
+    private void ColorEffect()
+    {
+        if (Active())
+        {
+            ChangeWorldColor(colorVector);
+        }
+        else
+        {
+            ChangeWorldColor(whiteVector);
+        }
+    }
+
+    private void ChangeWorldColor(Vector4 target)
+    {
+        effectRenderer.color = VectorColor.VectorToColor(Vector4.Lerp(effectRenderer.color, target, Time.deltaTime/base.speedUpSpeed));
     }
 
     public void Add(Rigidbody2D rb)
@@ -32,7 +67,6 @@ public class GlobalTimeSlow : TimeSlow {
 
     public void Activate()
     {
-        Debug.Log("Ny hidastuu");
         startingTime = Time.time;
     }
 
