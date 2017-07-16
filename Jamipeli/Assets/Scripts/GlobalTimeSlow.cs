@@ -25,6 +25,7 @@ public class GlobalTimeSlow : TimeSlow {
         creator.Event += Add;
         GameObject worldSpriteRenderer = new GameObject();
         effectRenderer = worldSpriteRenderer.AddComponent<SpriteRenderer>();
+        effectRenderer.sortingOrder = 2;
         effectRenderer.sprite = effectSprite;
         effectRenderer.color = VectorColor.VectorToColor(whiteVector);
         colorVector = VectorColor.ColorToVector(effectColor);
