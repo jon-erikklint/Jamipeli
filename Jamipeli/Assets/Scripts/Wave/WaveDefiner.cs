@@ -9,29 +9,32 @@ public class WaveDefiner : MonoBehaviour {
 
     private Wavespawner spawner;
     private GameManager game;
+    private WaveEndExtraManager extra;
 
     public int waveNumber { get { return _waveNumber; } }
     private int _waveNumber;
     private float startTime;
-    private bool spawning;
+    public bool spawning { get { return _spawning; } }
+    private bool _spawning;
 
 	void Start () {
         spawner = GetComponent<Wavespawner>();
         game = FindObjectOfType<GameManager>();
+        extra = FindObjectOfType<WaveEndExtraManager>();
 
         _waveNumber = 0;
-        spawning = false;
+        _spawning = false;
 
         startTime = float.MinValue;
 	}
 	
 	void Update () {
-        if (spawning)
+        if (_spawning)
         {
             return;
         }
 
-        if (!spawning && Time.time >= startTime + waveLowtime)
+        if (!_spawning && TimeToNextWave() <= 0)
         {
             SpawnWave();
         }
@@ -39,12 +42,13 @@ public class WaveDefiner : MonoBehaviour {
 
     void SpawnWave()
     {
+        extra.OnWaveStart();
         _waveNumber++;
 
         Wave wave = new Wave(10 / _waveNumber, (int)Mathf.Ceil(Mathf.Log(_waveNumber * 2)), new DoOnWaveEnded(WaveEnded));
         wave.AddEnemy("soldier", WaveEnemyAmount());
 
-        spawning = true;
+        _spawning = true;
         startTime = Time.time;
 
         spawner.Spawn(wave);
@@ -60,8 +64,13 @@ public class WaveDefiner : MonoBehaviour {
         int pointsFromWave = waveNumber * WaveEnemyAmount() * (int) (timeForOneKill / (Time.time - startTime));
         game.AddPoints(pointsFromWave);
 
-        spawning = false;
-
+        _spawning = false;
+        extra.OnWaveEnd();
         startTime = Time.time;
+    }
+
+    public float TimeToNextWave()
+    {
+        return startTime + waveLowtime - Time.time;
     }
 }
