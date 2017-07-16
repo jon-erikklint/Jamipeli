@@ -18,6 +18,7 @@ public class BurstBoss : Enemy{
         if(Time.time - lastChange > burstInterval+shootInterval + Time.deltaTime)
         {
             ChangeState(RandomInt(count));
+            lastChange = Time.time;
         }
     }
 

@@ -59,7 +59,7 @@ public class Explosion : MonoBehaviour {
             {
                 if (col.tag == "Player")
                     health.Damage(damagePlayer);
-                else
+                else if(col.tag == "Enemy" && !col.gameObject.GetComponent<Enemy>().isDead)
                     health.Damage(damageEnemy);
             }
         }
