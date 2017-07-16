@@ -17,9 +17,9 @@ public class GameManager : MonoBehaviour {
         this._points = 0;
     }
 
-    void Update()
+    public void AddPoints(int amount)
     {
-        _points++;
+        this._points += amount;
     }
 
     public void EndGame()

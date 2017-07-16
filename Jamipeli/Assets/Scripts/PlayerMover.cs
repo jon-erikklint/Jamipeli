@@ -26,7 +26,7 @@ public class PlayerMover : MonoBehaviour, Dieable, HasHealth {
     public float maxSlowTime = 150;
     public float slowtimeFromHealth;
     public float waitTime = 0.5f;
-    public float regenerateSpeed = 1;
+    public float slowFromEnemy = 5;
 
     private GameManager gameManager;
     private float slowLastActive;
@@ -144,10 +144,11 @@ public class PlayerMover : MonoBehaviour, Dieable, HasHealth {
                 locSlow.Deactivate();
             slowLastActive = Time.time;
         }
-        else if(Time.time - slowLastActive > waitTime)
-        {
-            slowCharge.Heal(regenerateSpeed * Time.deltaTime);
-        }
+    }
+
+    public void GetEnemyCharge()
+    {
+        this.slowCharge.Heal(slowFromEnemy);
     }
 
     private void CheckSlowRadius()

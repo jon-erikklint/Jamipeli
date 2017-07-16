@@ -10,6 +10,7 @@ public class Wavespawner : MonoBehaviour {
     public GameObject spawnPoints;
 
     private Creator creator;
+    private EnemyDeathManager deathManager;
 
     private Dictionary<string, GameObject> enemies;
     private List<Transform> spawns;
@@ -21,6 +22,7 @@ public class Wavespawner : MonoBehaviour {
 
 	void Start () {
         creator = FindObjectOfType<Creator>();
+        deathManager = FindObjectOfType<EnemyDeathManager>();
 
         enemies = new Dictionary<string, GameObject>();
         for(int i = 0; i < names.Count; i++)
@@ -51,6 +53,7 @@ public class Wavespawner : MonoBehaviour {
         SpawnWave();
     }
 
+
     public void SpawnWave()
     {
         List<Transform> availableSpawns = new List<Transform>(spawns);
@@ -59,7 +62,8 @@ public class Wavespawner : MonoBehaviour {
         while (leftToSpawn > 0 && availableSpawns.Count > 0 && wave.enemies > 0)
         {
             GameObject enemy = RandomEnemy();
-            enemy.GetComponent<Enemy>().AddDestroyListener(new DoOnDestroy(SpawnedDie));
+            enemy.GetComponent<Enemy>().Destroyed += deathManager.OnEnemyDeath;
+            //enemy.GetComponent<Enemy>().AddDestroyListener(new DoOnDestroy(deathManager.OnEnemyDeath));
             SetSpawn(enemy, availableSpawns);
             spawned++;
             leftToSpawn--;
