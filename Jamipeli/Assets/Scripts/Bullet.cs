@@ -10,17 +10,18 @@ public class Bullet : MonoBehaviour {
     public float safeTime = 0.1f;
 
     public Color fatalColor = Color.white;
-    public Color safeColor = Color.blue;
+    public Color fatalForEnemyColor = Color.blue;
+    public Color safeColor = Color.white;
     
     Rigidbody2D playerRb;
 
     Rigidbody2D bulletRb;
     SpriteRenderer bulletRenderer;
-
     float lastHit;
     float speed { get { return bulletRb.velocity.magnitude; } }
+    bool fatalForEnemy = false;
 
-    void Start () {
+    void Awake() {
         Transform player = FindObjectOfType<PlayerMover>().transform;
         playerRb = player.GetComponent<Rigidbody2D>();
 
@@ -28,29 +29,45 @@ public class Bullet : MonoBehaviour {
         bulletRenderer = GetComponent<SpriteRenderer>();
 
         lastHit = Time.time;
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () {
-        if (speed < fatalSpeed)
+        if (!IsFatal())
             bulletRenderer.color = safeColor;
         else
-            bulletRenderer.color = fatalColor;
-	}
+            bulletRenderer.color = fatalForEnemy ? fatalForEnemyColor : fatalColor; 
+    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         GameObject obj = collision.gameObject;
-        if (obj.tag == "Bullet")
+        if (obj.tag == "Bullet" && obj.tag != "Wall")
             return;
-        if (Time.time - lastHit > safeTime && bulletRenderer.color == fatalColor)
+
+        if (obj.tag == "Wall" || (Time.time - lastHit > safeTime && IsFatal()))
         {
             HasHealth health = obj.GetComponent<HasHealth>();
-            if(health != null)
+            if(health != null && Damages(obj.tag))
                 health.Damage(damage);
             Destroy(gameObject);
         }
+        Debug.Log((Time.time - lastHit > safeTime) + ", " + IsFatal());
+        lastHit = Time.deltaTime;
+    }
 
-        lastHit = Time.time;
+    public void MakeFatalForEnemies()
+    {
+        fatalForEnemy = true;
+    }
+
+    private bool IsFatal()
+    {
+        return speed > fatalSpeed;
+    }
+
+    private bool Damages(string tag)
+    {
+        return (tag == "Enemy" && fatalForEnemy) || (tag == "Player");
     }
 }
