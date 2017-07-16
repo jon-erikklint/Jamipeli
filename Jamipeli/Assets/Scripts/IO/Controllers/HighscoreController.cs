@@ -27,6 +27,9 @@ public class HighscoreController : MonoBehaviour {
         }
 
         highScore.text = "Highscore: " + hs;
-        lastScore.text = "Score: " + s;
+        if(lastScore != null)
+        {
+            lastScore.text = "Score: " + s;
+        }
     }
 }
