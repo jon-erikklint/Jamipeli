@@ -9,20 +9,22 @@ public class Gun : MonoBehaviour, GunInterface {
     public float shootForceMultiplier;
     public float shootInterval;
 
-    private float lastShoot;
-
     private Transform owner;
     private CircleCollider2D oc;
 
     private Creator creator;
 
+    Timer timer;
+
 	void Start () {
         owner = transform;
         oc = GetComponent<CircleCollider2D>();
 
-        lastShoot = long.MinValue;
-
         creator = FindObjectOfType<Creator>();
+        GameObject timerHolder = new GameObject("TimerHolder");
+        timerHolder.transform.parent = this.transform;
+        timer = timerHolder.AddComponent<Timer>();
+        timer.StartTimer(0);
 	}
 
     public bool Shoot(float angle)
@@ -33,18 +35,14 @@ public class Gun : MonoBehaviour, GunInterface {
 
         SetProjectileSpeed(projectile, angle);
 
+        timer.StartTimer(shootInterval, true);
+
         return true;
     }
 
     private bool CanShoot()
     {
-        if(Time.time >= lastShoot + shootInterval)
-        {
-            lastShoot = Time.time;
-            return true;
-        }
-
-        return false;
+        return timer.ready;
     }
 
     private Vector3 CreationPoint()
