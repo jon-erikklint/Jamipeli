@@ -11,6 +11,7 @@ public class Gun : MonoBehaviour, GunInterface {
 
     private Transform owner;
     private CircleCollider2D oc;
+    private SlowKeeper slow;
 
     private Creator creator;
 
@@ -19,6 +20,7 @@ public class Gun : MonoBehaviour, GunInterface {
 	void Start () {
         owner = transform;
         oc = GetComponent<CircleCollider2D>();
+        slow = GetComponent<SlowKeeper>();
 
         creator = FindObjectOfType<Creator>();
         GameObject timerHolder = new GameObject("TimerHolder");
@@ -74,6 +76,7 @@ public class Gun : MonoBehaviour, GunInterface {
         Rigidbody2D projbody = proj.GetComponent<Rigidbody2D>();
         
         Vector2 projectileVelocity = ShootForce(angle);
+        projectileVelocity *= slow.slowFactor;
 
         projbody.AddForce(projectileVelocity, ForceMode2D.Impulse);
     }

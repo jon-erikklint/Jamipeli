@@ -96,17 +96,17 @@ public class WaveDefiner : MonoBehaviour {
 
     private int WaveDynamiters()
     {
-        return waveNumber > 3 && !(waveNumber % 2 == 0 && waveNumber % 4 != 0) ? waveNumber / 2 : 0;
+        return waveNumber > 3 ? waveNumber / 2 : 0;
     }
 
     private int WaveSuiciders()
     {
-        return waveNumber > 1 ? (_waveNumber - 1) * 3 : 0;
+        return waveNumber > 1 ? (_waveNumber - 1) * 2 : 0;
     }
 
     private int WaveSprayers()
     {
-        return waveNumber > 4 && waveNumber % 3 != 0 ? waveNumber : 0;
+        return waveNumber > 4 ? waveNumber / 2 : 0;
     }
 
     private bool BossLevel()

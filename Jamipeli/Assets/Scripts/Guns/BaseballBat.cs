@@ -8,6 +8,7 @@ public class BaseballBat : MonoBehaviour, GunInterface {
     public float hitRadius;
     public float hitFov;
     public float hitStrength;
+    public float enemyHitMultiplier;
     public float cooldown;
 
     public float drawTime;
@@ -75,8 +76,15 @@ public class BaseballBat : MonoBehaviour, GunInterface {
 
         Vector2 hitForce = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - toHit.transform.position);
         hitForce = hitForce.normalized;
-        hitForce *= Math.Max(rb.velocity.magnitude, hitStrength);
-        
+
+        float multiplier = Math.Max(rb.velocity.magnitude, hitStrength);
+        if (toHit.tag.Equals("Enemy") && multiplier != rb.velocity.magnitude)
+        {
+            multiplier *= enemyHitMultiplier;
+        }
+
+        hitForce *= multiplier;
+
         rb.velocity = hitForce;
         rb.transform.right = hitForce;
 
