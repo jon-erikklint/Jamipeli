@@ -13,7 +13,6 @@ public class GlobalTimeSlow : TimeSlow {
     SpriteRenderer effectRenderer;
     Vector4 colorVector;
     Vector4 whiteVector;
-    Transform cameraTransform;
     void Start()
     {
         Rigidbody2D[] rbs = FindObjectsOfType<Rigidbody2D>();
@@ -27,13 +26,12 @@ public class GlobalTimeSlow : TimeSlow {
         GameObject worldSpriteRenderer = new GameObject();
         effectRenderer = worldSpriteRenderer.AddComponent<SpriteRenderer>();
         effectRenderer.sprite = effectSprite;
-
+        effectRenderer.color = VectorColor.VectorToColor(whiteVector);
         colorVector = VectorColor.ColorToVector(effectColor);
         whiteVector = VectorColor.ColorToVector(new Color(1,1,1,0));
-        cameraTransform = FindObjectOfType<Camera>().transform;
     }
 
-    private void Update()
+    protected override void DoOnUpdate()
     {
         ColorEffect();
     }

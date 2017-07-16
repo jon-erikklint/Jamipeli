@@ -24,10 +24,15 @@ public abstract class TimeSlow : MonoBehaviour {
         {
             SpeedUp();
         }
+
+        DoOnUpdate();
     }
+
+    protected virtual void DoOnUpdate() { }
 
     protected virtual void SlowDown()
     {
+        Debug.Log("Hidasta");
         float frac;
         if (slowDownSpeed > 0)
             frac = Time.deltaTime / slowDownSpeed;

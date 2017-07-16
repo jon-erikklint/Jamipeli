@@ -191,7 +191,8 @@ public abstract class Enemy : MonoBehaviour, Dieable, HasHealth {
 
     private void OnDestroy()
     {
-        Destroyed();
+        if(Destroyed != null)
+            Destroyed();
         Destroyed = null;
     }
 

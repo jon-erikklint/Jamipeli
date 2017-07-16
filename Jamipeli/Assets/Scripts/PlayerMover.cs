@@ -36,6 +36,9 @@ public class PlayerMover : MonoBehaviour, Dieable, HasHealth {
     private Vector4 damageColorVector;
     private Vector4 colorVector;
 
+    private CircleCollider2D collider;
+    private CameraHandler cameraHandler;
+
     private void Awake()
     {
         this.slowCharge = new Health(maxSlowTime);
@@ -45,6 +48,10 @@ public class PlayerMover : MonoBehaviour, Dieable, HasHealth {
         spriteRenderer = GetComponent<SpriteRenderer>();
         damageColorVector = VectorColor.ColorToVector(damageColor);
         colorVector = VectorColor.ColorToVector(spriteRenderer.color);
+
+        collider = GetComponent<CircleCollider2D>();
+
+        cameraHandler = FindObjectOfType<CameraHandler>();
 
         lastHit = Mathf.NegativeInfinity;
     }
@@ -90,18 +97,17 @@ public class PlayerMover : MonoBehaviour, Dieable, HasHealth {
             globSlow.Activate();
             locSlow.Deactivate();
             globalSlows--;
+            cameraHandler.smoothness = 3f;
         }
+        else if (!globSlow.Active())
+            cameraHandler.smoothness = 10f;
     }
 
     private void CheckLocalSlow()
     {
         if(globSlow.Active())
         {
-            if (Time.time - lastTeleport > teleportCooldown && Input.GetMouseButtonDown(1))
-            {
-                Teleport(mousePosition);
-                lastTeleport = Time.time;
-            }
+            CheckTeleport();
             return;
         }
 
@@ -113,6 +119,19 @@ public class PlayerMover : MonoBehaviour, Dieable, HasHealth {
         if (Input.GetMouseButtonUp(1))
         {
             locSlow.Deactivate();
+        }
+    }
+
+    void CheckTeleport()
+    {
+
+        if (Time.time - lastTeleport > teleportCooldown && Input.GetMouseButtonDown(1))
+        {
+            if (Physics2D.OverlapCircle(mousePosition, collider.radius/2) == null)
+            {
+                Teleport(mousePosition);
+                lastTeleport = Time.time;
+            }
         }
     }
 
