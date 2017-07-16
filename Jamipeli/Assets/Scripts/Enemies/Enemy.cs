@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public delegate void DoOnDestroy();
+public delegate void DoOnDestroy(Enemy died);
 
-public abstract class Enemy : MonoBehaviour, Dieable, HasHealth {
+public abstract class Enemy : MonoBehaviour, Dieable, HasHealth
+{
 
+    public int points;
     public float maxHealth;
     public Color damageColor = Color.red;
     public float invincibilityTime = 0.2f;
@@ -192,7 +194,7 @@ public abstract class Enemy : MonoBehaviour, Dieable, HasHealth {
     private void OnDestroy()
     {
         if(Destroyed != null)
-            Destroyed();
+            Destroyed(this);
         Destroyed = null;
     }
 
