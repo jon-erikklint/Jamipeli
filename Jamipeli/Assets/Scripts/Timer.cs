@@ -9,14 +9,14 @@ public class Timer : MonoBehaviour
     public string purpose;
     bool paused_ = false;
     bool running_ = false;
-    bool hasEnded_ = false;
+    bool ready_ = false;
 
     float duration_ = -1;
     float timeLeft_ = 0;
 
     public bool paused { get { return paused_; } }
     public bool running { get { return running_; } }
-    public bool hasEnded { get { return hasEnded_; } }
+    public bool ready { get { return ready_; } }
 
     public float duration { get { return duration_; } }
     public float timeLeft { get { return timeLeft_; } }
@@ -42,7 +42,7 @@ public class Timer : MonoBehaviour
             running_ = timeLeft_ > 0;
             if (!running_)
             {
-                hasEnded_ = true;
+                ready_ = true;
                 if (actionList != null)
                     actionList();
             }
@@ -55,7 +55,7 @@ public class Timer : MonoBehaviour
             return false;
 
         running_ = true;
-        hasEnded_ = false;
+        ready_ = false;
         duration_ = time;
         timeLeft_ = time;
         return true;
